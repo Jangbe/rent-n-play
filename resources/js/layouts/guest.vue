@@ -55,7 +55,7 @@ export default {
                 }
             })
         }
-        window.addEventListener('load', navbarlinksActive)
+        navbarlinksActive();
         onscroll(document, navbarlinksActive)
 
         const scrollto = (el) => {
@@ -127,13 +127,11 @@ export default {
             }
         }, true)
 
-        window.addEventListener('load', () => {
-            if (window.location.hash) {
-                if (select(window.location.hash)) {
-                    scrollto(window.location.hash)
-                }
+        if (window.location.hash) {
+            if (select(window.location.hash)) {
+                scrollto(window.location.hash)
             }
-        });
+        }
 
         new Swiper('.clients-slider', {
             speed: 400,
@@ -168,34 +166,31 @@ export default {
             }
         });
 
-        window.addEventListener('load', () => {
-            let productContainer = select('.product-container');
-            if (productContainer) {
-                let productIsotope = new Isotope(productContainer, {
-                    itemSelector: '.product-item',
-                    layoutMode: 'fitRows'
+        let productContainer = select('.product-container');
+        if (productContainer) {
+            let productIsotope = new Isotope(productContainer, {
+                itemSelector: '.product-item',
+                layoutMode: 'fitRows'
+            });
+
+            let productFilters = select('#product-filters li', true);
+
+            on('click', '#product-filters li', function (e) {
+                e.preventDefault();
+                productFilters.forEach(function (el) {
+                    el.classList.remove('filter-active');
                 });
+                this.classList.add('filter-active');
 
-                let productFilters = select('#product-filters li', true);
-
-                on('click', '#product-filters li', function (e) {
-                    e.preventDefault();
-                    productFilters.forEach(function (el) {
-                        el.classList.remove('filter-active');
-                    });
-                    this.classList.add('filter-active');
-
-                    productIsotope.arrange({
-                        filter: this.getAttribute('data-filter')
-                    });
-                    aos_init();
-                }, true);
-            }
-
-        });
+                productIsotope.arrange({
+                    filter: this.getAttribute('data-filter')
+                });
+                aos_init();
+            }, true);
+        }
 
         const productLightbox = GLightbox({
-            selector: '.portfokio-lightbox'
+            selector: '.portfolio-lightbox'
         });
 
         new Swiper('.product-details-slider', {
@@ -244,9 +239,8 @@ export default {
                 mirror: false
             });
         }
-        window.addEventListener('load', () => {
-            aos_init();
-        });
+
+        aos_init();
 
         new PureCounter();
     }

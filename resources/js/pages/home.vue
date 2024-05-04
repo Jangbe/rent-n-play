@@ -149,7 +149,7 @@ section {
                                     <p>App</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-1.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="App 1"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="App 1"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -165,7 +165,7 @@ section {
                                     <p>Web</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-2.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="Web 3"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="Web 3"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -181,7 +181,7 @@ section {
                                     <p>App</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-3.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="App 2"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="App 2"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -197,7 +197,7 @@ section {
                                     <p>Card</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-4.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="Card 2"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="Card 2"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -213,7 +213,7 @@ section {
                                     <p>Web</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-5.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="Web 2"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="Web 2"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -229,7 +229,7 @@ section {
                                     <p>App</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-6.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="App 3"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="App 3"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -245,7 +245,7 @@ section {
                                     <p>Card</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-7.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="Card 1"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="Card 1"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -261,7 +261,7 @@ section {
                                     <p>Card</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-8.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="Card 3"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="Card 3"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
@@ -277,7 +277,7 @@ section {
                                     <p>Web</p>
                                     <div class="product-links">
                                         <a href="/guest/img/product/product-9.jpg" data-gallery="productGallery"
-                                            class="portfokio-lightbox" title="Web 3"><i class="bi bi-plus"></i></a>
+                                            class="portfolio-lightbox" title="Web 3"><i class="bi bi-plus"></i></a>
                                         <a href="product-details.html" title="More Details"><i
                                                 class="bi bi-link"></i></a>
                                     </div>
