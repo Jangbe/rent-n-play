@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Rent N Play</title>
-    @vite(['resources/css/app.css', 'resources/sass/app.scss'])
+    @vite(['resources/sass/app.scss'])
 </head>
 
 <body>

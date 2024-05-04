@@ -3,13 +3,31 @@
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
 }
-.form-group{
+
+.form-group {
     margin-bottom: 0;
 }
-.label{
+
+.label {
     margin-bottom: 0;
 }
 </style>
+
+<script setup>
+import { ref } from 'vue';
+
+const formData = ref({});
+
+const submit = () => {
+    axios.post('auth/register', formData.value).then(({ data }) => {
+        console.log(data);
+    }).catch(response => {
+        if(response?.response?.data){
+            console.log(response.response.data.message);
+        }
+    })
+}
+</script>
 
 <template>
     <div class="wrap d-md-flex">
@@ -32,22 +50,22 @@
                     </p>
                 </div>
             </div>
-            <form action="#" class="signin-form">
+            <form action="#" @submit.prevent="submit" class="signin-form">
                 <div class="form-group">
                     <label class="label" for="name">Nama</label>
-                    <input type="text" class="form-control" placeholder="Nama" required>
+                    <input type="text" v-model="formData.name" class="form-control" placeholder="Nama" required>
                 </div>
                 <div class="form-group">
                     <label class="label" for="email">Email</label>
-                    <input type="email" class="form-control" placeholder="Email" required>
+                    <input type="email" v-model="formData.email" class="form-control" placeholder="Email" required>
                 </div>
                 <div class="form-group">
                     <label class="label" for="password">Katasandi</label>
-                    <input type="password" class="form-control" placeholder="Katasandi" required>
+                    <input type="password" v-model="formData.password" class="form-control" placeholder="Katasandi" required>
                 </div>
                 <div class="form-group">
                     <label class="label" for="password_confirmation">Konfirmasi Katasandi</label>
-                    <input type="password" class="form-control" placeholder="Katasandi" required>
+                    <input type="password" v-model="formData.password_confirmation" class="form-control" placeholder="Katasandi" required>
                 </div>
                 <div class="form-group mt-4">
                     <button type="submit" class="form-control btn btn-primary submit px-3">Daftar</button>

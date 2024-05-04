@@ -43,7 +43,7 @@ section {
                         <li><a class="nav-link scrollto" href="#about">About</a></li>
                         <li><a class="nav-link scrollto" href="#product">Product</a></li>
                         <li><a class="nav-link scrollto" href="#checkout">Checkout</a></li>
-                        <li><router-link class="getstarted scrollto" to="login">Login</router-link></li>
+                        <li><router-link class="getstarted" to="login">Login</router-link></li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>
                 </nav><!-- .navbar -->

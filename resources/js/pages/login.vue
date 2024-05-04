@@ -5,6 +5,18 @@
 }
 </style>
 
+<script setup>
+import { ref } from 'vue';
+
+const formData = ref({});
+const submit = () => {
+    // alert(JSON.stringify(formData.value));
+    axios.post('login', formData.value).then(({data}) => {
+        console.log(data);
+    })
+}
+</script>
+
 <template>
     <div class="wrap d-md-flex">
         <div class="text-wrap p-4 p-lg-5 text-center d-flex align-items-center order-md-last">
@@ -26,14 +38,14 @@
                     </p>
                 </div>
             </div>
-            <form action="#" class="signin-form">
+            <form action="#" class="signin-form" @submit.prevent="submit">
                 <div class="form-group mb-3">
                     <label class="label" for="name">Email</label>
-                    <input type="text" class="form-control" placeholder="Email" required>
+                    <input type="text" v-model="formData.email" class="form-control" placeholder="Email" required>
                 </div>
                 <div class="form-group mb-3">
                     <label class="label" for="password">Katasandi</label>
-                    <input type="password" class="form-control" placeholder="Katasandi" required>
+                    <input type="password" v-model="formData.password" class="form-control" placeholder="Katasandi" required>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="form-control btn btn-primary submit px-3">Masuk</button>
