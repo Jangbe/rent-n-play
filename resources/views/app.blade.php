@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Rent N Play</title>
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
     @vite(['resources/css/app.css', 'resources/sass/app.scss'])
 </head>
 
@@ -23,8 +21,15 @@
     <script src="/guest/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="/guest/vendor/php-email-form/validate.js"></script>
 
+    <script src="/admin/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="/admin/vendor/chart.js/chart.umd.js"></script>
+    <script src="/admin/vendor/echarts/echarts.min.js"></script>
+    <script src="/admin/vendor/quill/quill.min.js"></script>
+    <script src="/admin/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="/admin/vendor/tinymce/tinymce.min.js"></script>
+    <script src="/admin/vendor/php-email-form/validate.js"></script>
+
     <!-- Template Main JS File -->
-    {{-- <script src="/guest/js/main.js"></script> --}}
     @vite(['resources/js/app.js'])
 </body>
 
