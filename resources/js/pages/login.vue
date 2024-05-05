@@ -5,6 +5,31 @@
 }
 </style>
 
+<script setup>
+import { ref } from 'vue';
+import { Toast } from '../plugins/swal';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '../stores/user';
+
+const user = useUserStore();
+const router = useRouter();
+const formData = ref({});
+
+const submit = () => {
+    console.log('Submited');
+    axios.post('auth/login', formData.value).then(({ data }) => {
+        localStorage.setItem('accessToken', data.access_token);
+        window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
+        user.getUser();
+        router.replace('/admin/dashboard');
+    }).catch(({ response }) => {
+        if (response?.data) {
+            Toast.fire({ title: response.data.message, icon: 'error' });
+        }
+    })
+}
+</script>
+
 <template>
     <div class="wrap d-md-flex">
         <div class="text-wrap p-4 p-lg-5 text-center d-flex align-items-center order-md-last">
@@ -26,24 +51,22 @@
                     </p>
                 </div>
             </div>
-            <form action="#" class="signin-form">
+            <form action="#" class="signin-form" @submit.prevent="submit">
                 <div class="form-group mb-3">
                     <label class="label" for="name">Email</label>
-                    <input type="text" class="form-control" placeholder="Email" required>
+                    <input v-model="formData.email" type="email" class="form-control" placeholder="Email" required>
                 </div>
                 <div class="form-group mb-3">
                     <label class="label" for="password">Katasandi</label>
-                    <input type="password" class="form-control" placeholder="Katasandi" required>
+                    <input v-model="formData.password" type="password" class="form-control" placeholder="Katasandi"
+                        required>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="form-control btn btn-primary submit px-3">Masuk</button>
                 </div>
                 <div class="form-group d-md-flex">
                     <div class="w-50 text-left">
-                        <label class="checkbox-wrap checkbox-primary mb-0">Ingat Saya
-                            <input type="checkbox" checked>
-                            <span class="checkmark"></span>
-                        </label>
+                        <a href="#" @click="router.go(-1)">Kembali</a>
                     </div>
                     <div class="w-50 text-md-right">
                         <router-link to="forgot-password">Lupa Katasandi</router-link>

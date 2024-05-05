@@ -21,6 +21,7 @@
     <script src="/guest/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="/guest/vendor/php-email-form/validate.js"></script>
 
+    <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/admin/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="/admin/vendor/chart.js/chart.umd.js"></script>
     <script src="/admin/vendor/echarts/echarts.min.js"></script>

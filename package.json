@@ -19,6 +19,8 @@
         "vue": "^3.2.37"
     },
     "dependencies": {
+        "pinia": "^2.1.7",
+        "sweetalert2": "^11.10.8",
         "vue-router": "^4.3.0"
     }
 }
