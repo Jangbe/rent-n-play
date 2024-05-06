@@ -251,13 +251,14 @@ export default {
     data: () => ({ user: useUserStore() }),
     methods: {
         logout: function () {
-            axios.post('auth/logout').then(() => {
-                window.axios.defaults.headers.common['Authorization'] = null;
-                this.$router.replace('/login');
-            }).catch(({ response }) => {
+            axios.post('auth/logout').catch(({ response }) => {
                 if (response?.data) {
                     Toast.fire({ title: response.data.message, icon: 'error' });
                 }
+            }).finally(() => {
+                localStorage.removeItem('accessToken');
+                window.axios.defaults.headers.common['Authorization'] = null;
+                this.$router.replace('/login');
             })
         }
     },

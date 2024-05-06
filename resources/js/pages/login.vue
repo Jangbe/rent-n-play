@@ -96,4 +96,5 @@ const oAuth = (provider) => {
 <route lang="yaml">
     meta:
         layout: auth
+        redirectIfLoggedIn: true
 </route>
