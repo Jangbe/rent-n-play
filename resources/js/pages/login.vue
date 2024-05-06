@@ -28,6 +28,19 @@ const submit = () => {
         }
     })
 }
+
+const oAuth = (provider) => {
+    const authWindow = window.open('/auth/google', '_blank', 'width=600&height=400');
+
+    window.addEventListener('message', function (event) {
+        if (event.source == authWindow) {
+            localStorage.setItem('accessToken', event.data);
+            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + event.data;
+            user.getUser();
+            router.replace('/admin/dashboard');
+        }
+    })
+}
 </script>
 
 <template>
@@ -46,7 +59,8 @@ const submit = () => {
                 </div>
                 <div class="w-100">
                     <p class="social-media d-flex justify-content-end">
-                        <a href="#" class="social-icon d-flex align-items-center justify-content-center"><span
+                        <a href="#" @click.prevent="oAuth('google')"
+                            class="social-icon d-flex align-items-center justify-content-center"><span
                                 class="fa fa-google"></span></a>
                     </p>
                 </div>

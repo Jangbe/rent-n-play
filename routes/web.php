@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\SocialAccount;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +15,30 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('auth/{provider}', fn ($provider) => Socialite::driver($provider)->redirect());
+Route::get('auth/{provider}/callback', function ($provider) {
+    $providerAccount = Socialite::driver($provider)->stateless()->user();
+
+    $data = [
+        'name' => $provider,
+        'uuid' => $providerAccount->id
+    ];
+    $socialAccount = SocialAccount::with('user')->where($data)->first();
+
+    if (is_null($socialAccount)) {
+        $user = User::create([
+            'name' => $providerAccount->name,
+            'email' => $providerAccount->email,
+            'password' => bcrypt('123456')
+        ]);
+
+        $socialAccount = $user->socialAccounts()->create($data);
+    }
+
+    $token = $socialAccount->user->createToken('auth_token')->plainTextToken;
+    return view('social-account', compact('token'));
+});
 
 Route::redirect('/', 'home');
 Route::view('{any}', 'app')->where('any', '^.*');
