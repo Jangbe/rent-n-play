@@ -25,7 +25,7 @@ class CategoryController extends Controller
         ///dd($category);
 
         if (!$category) {
-           return response()->json('Data tidak ada');
+           return response()->json('Data tidak ada', 404);
         }
 
         $category->update([
