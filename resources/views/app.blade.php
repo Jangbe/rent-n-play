@@ -26,9 +26,10 @@
     <script src="/admin/vendor/chart.js/chart.umd.js"></script>
     <script src="/admin/vendor/echarts/echarts.min.js"></script>
     <script src="/admin/vendor/quill/quill.min.js"></script>
-    <script src="/admin/vendor/simple-datatables/simple-datatables.js"></script>
     <script src="/admin/vendor/tinymce/tinymce.min.js"></script>
     <script src="/admin/vendor/php-email-form/validate.js"></script>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 
     <!-- Template Main JS File -->
     @vite(['resources/js/app.js'])

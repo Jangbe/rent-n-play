@@ -26,6 +26,53 @@ section {
 }
 </style>
 
+<script setup>
+import { ref, onMounted, defineEmits } from 'vue';
+import { Toast } from '../plugins/swal';
+import { useUserStore } from '../stores/user';
+
+const userStore = useUserStore();
+const emit = defineEmits(['aos_init']);
+const categories = ref([]);
+const products = ref([]);
+var productIsotope = null;
+const fetchData = async () => {
+    await axios.get('category').then(({ data }) => categories.value = data);
+    await axios.get('product').then(({ data }) => products.value = data);
+    const productLightbox = GLightbox({
+        selector: '.product-lightbox'
+    });
+    let productContainer = document.querySelector('.product-container');
+    if (productContainer) {
+        setTimeout(() => {
+            productIsotope = new Isotope(productContainer, {
+                itemSelector: '.product-item',
+                layoutMode: 'fitRows'
+            });
+        }, 200);
+    }
+}
+fetchData();
+
+const filterBy = (filter) => {
+    let productFilters = document.querySelectorAll('#product-filters li');
+    productFilters.forEach(function (el) {
+        el.classList.remove('filter-active');
+        const filterData = el.attributes['data-filter'].value;
+        if (filter == '*') {
+            document.querySelector('#product-filters li[data-filter="*"]').classList.add('filter-active');
+        } else if (filterData == filter)
+            el.classList.add('filter-active');
+    });
+
+    productIsotope.arrange({ filter });
+}
+
+const addToCart = (product) => {
+    Toast.fire({ title: 'Barang berhasil ditambahkan ke keranjang', icon: 'info' });
+}
+</script>
+
 <template>
     <div>
         <!-- ======= Header ======= -->
@@ -43,7 +90,12 @@ section {
                         <li><a class="nav-link scrollto" href="#about">About</a></li>
                         <li><a class="nav-link scrollto" href="#product">Product</a></li>
                         <li><a class="nav-link scrollto" href="#checkout">Checkout</a></li>
-                        <li><router-link class="getstarted" to="login">Login</router-link></li>
+                        <li v-if="userStore.user == null"><router-link class="getstarted" to="login">Login</router-link>
+                        </li>
+                        <li v-else>
+                            <router-link class="getstarted"
+                                :to="userStore.user.role == 'Admin' ? '/admin/dashboard' : '/customer/dashboard'">Dashboard</router-link>
+                        </li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>
                 </nav><!-- .navbar -->
@@ -71,7 +123,7 @@ section {
                         </div>
                     </div>
                     <div class="col-lg-6 hero-img" data-aos="zoom-out" data-aos-delay="200">
-                        <!-- <img src="/guest/img/background.png" class="img-fluid" alt=""> -->
+
                     </div>
                 </div>
             </div>
@@ -131,155 +183,34 @@ section {
                     <div class="row" data-aos="fade-up" data-aos-delay="100">
                         <div class="col-lg-12 d-flex justify-content-center">
                             <ul id="product-filters">
-                                <li data-filter="*" class="filter-active">All</li>
-                                <li data-filter=".filter-app">App</li>
-                                <li data-filter=".filter-card">Card</li>
-                                <li data-filter=".filter-web">Web</li>
+                                <li @click="filterBy('*')" data-filter="*" class="filter-active">Semua</li>
+                                <li v-for="category in categories" :data-filter="'.id-' + category.id"
+                                    @click="filterBy('.id-' + category.id)">
+                                    {{ category.name }}
+                                </li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="row gy-4 product-container" data-aos="fade-up" data-aos-delay="200">
 
-                        <div class="col-lg-4 col-md-6 product-item filter-app">
+                        <div v-for="product in products"
+                            :class="['col-lg-4 col-md-6 product-item', 'id-' + product.category_id]">
                             <div class="product-wrap">
-                                <img src="/guest/img/product/product-1.jpg" class="img-fluid" alt="">
+                                <img :src="'/storage/' + product.picture" class="img-fluid" alt="">
                                 <div class="product-info">
-                                    <h4>App 1</h4>
-                                    <p>App</p>
+                                    <h4>{{ product.name }}</h4>
+                                    <p>{{ product.category.name }}</p>
                                     <div class="product-links">
-                                        <a href="/guest/img/product/product-1.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="App 1"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-web">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-2.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>Web 3</h4>
-                                    <p>Web</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-2.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="Web 3"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-app">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-3.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>App 2</h4>
-                                    <p>App</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-3.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="App 2"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-card">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-4.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>Card 2</h4>
-                                    <p>Card</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-4.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="Card 2"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-web">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-5.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>Web 2</h4>
-                                    <p>Web</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-5.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="Web 2"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-app">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-6.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>App 3</h4>
-                                    <p>App</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-6.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="App 3"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-card">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-7.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>Card 1</h4>
-                                    <p>Card</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-7.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="Card 1"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-card">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-8.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>Card 3</h4>
-                                    <p>Card</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-8.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="Card 3"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 product-item filter-web">
-                            <div class="product-wrap">
-                                <img src="/guest/img/product/product-9.jpg" class="img-fluid" alt="">
-                                <div class="product-info">
-                                    <h4>Web 3</h4>
-                                    <p>Web</p>
-                                    <div class="product-links">
-                                        <a href="/guest/img/product/product-9.jpg" data-gallery="productGallery"
-                                            class="portfolio-lightbox" title="Web 3"><i class="bi bi-plus"></i></a>
-                                        <a href="product-details.html" title="More Details"><i
-                                                class="bi bi-link"></i></a>
+                                        <a :href="'/storage/' + product.picture" data-gallery="productGallery"
+                                            class="product-lightbox" :title="product.description"><i
+                                                class="bi bi-plus"></i></a>
+                                        <router-link :to="'/product/' + product.id" title="Lihat Detail">
+                                            <i class="bi bi-link"></i>
+                                        </router-link>
+                                        <a href="#" @click.prevent="addToCart(product)" title="More Details">
+                                            <i class="bi bi-cart"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

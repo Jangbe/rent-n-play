@@ -46,17 +46,17 @@ function detectServerConfig(host) {
     let certificatePath = process.env.VITE_SSL_LOCAL_CERT
 
     if (!fs.existsSync(keyPath)) {
-        return { watch: { usePolling: true } }
+        return { watch: { usePolling: true, ignored: ['**/storage/**'] } }
     }
 
     if (!fs.existsSync(certificatePath)) {
-        return { watch: { usePolling: true } }
+        return { watch: { usePolling: true, ignored: ['**/storage/**'] } }
     }
 
     return {
         hmr: { host },
         host,
-        watch: { usePolling: true },
+        watch: { usePolling: true, ignored: ['**/storage/**'] },
         port: process.env.VITE_PORT,
         https: {
             key: fs.readFileSync(keyPath),

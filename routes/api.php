@@ -5,9 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\ProductController;
-use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,8 +19,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('/user', [ProfileController::class, 'user']);
+    Route::post('/update-profile', [ProfileController::class, 'update_profile']);
+    Route::post('/update-password', [ProfileController::class, 'update_password']);
+
+    Route::get('identity', [IdentityController::class, 'index']);
+    Route::post('identity', [IdentityController::class, 'store']);
+    Route::get('identity/{user_id}', [IdentityController::class, 'show']);
+    Route::put('identity/{id}', [IdentityController::class, 'update']);
+    Route::delete('identity/{id}', [IdentityController::class, 'destroy']);
+
+    Route::get('address', [AddressController::class, 'index']);
+    Route::post('address', [AddressController::class, 'store']);
+    Route::get('address/{user_id}', [AddressController::class, 'show']);
+    Route::put('address/{id}', [AddressController::class, 'update']);
+    Route::delete('address/{id}', [AddressController::class, 'destroy']);
 });
 
 Route::post('auth/register', [AuthController::class, 'register']);
@@ -40,13 +52,3 @@ Route::get('product', [ProductController::class, 'index']);
 Route::post('product', [ProductController::class, 'store']);
 Route::put('product/{id}', [ProductController::class, 'update']);
 Route::delete('product/{id}', [ProductController::class, 'destroy']);
-
-Route::get('identity', [IdentityController::class, 'index']);
-Route::post('identity', [IdentityController::class, 'store']);
-Route::put('identity/{id}', [IdentityController::class, 'update']);
-Route::delete('identity/{id}', [IdentityController::class, 'destroy']);
-
-Route::get('address', [AddressController::class, 'index']);
-Route::post('address', [AddressController::class, 'store']);
-Route::put('address/{id}', [AddressController::class, 'update']);
-Route::delete('address/{id}', [AddressController::class, 'destroy']);

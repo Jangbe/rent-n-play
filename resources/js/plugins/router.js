@@ -10,7 +10,6 @@ const router = createRouter({
 })
 router.beforeEach(to => {
     const isLoggedIn = isUserLoggedIn();
-    console.log(isLoggedIn);
 
     if (to.meta.redirectIfLoggedIn && isLoggedIn) {
         return '/home';

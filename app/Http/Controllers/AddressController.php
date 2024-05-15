@@ -16,7 +16,7 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         Address::create([
-            'user_id' => $request->get('user_id'),
+            'user_id' => $request->get('user_id', $request->user()->id),
             'type' => $request->get('type'),
             'street_name' => $request->get('street_name'),
             'contact_name' => $request->get('contact_name'),
@@ -24,6 +24,12 @@ class AddressController extends Controller
             'detail' => $request->get('detail'),
         ]);
         return response()->json("Address berhasil di tambahkan");
+    }
+
+    public function show($user_id)
+    {
+        $addresses = Address::where('user_id', $user_id)->get();
+        return response()->json($addresses);
     }
 
     public function update(Request $request, $id)
@@ -46,7 +52,8 @@ class AddressController extends Controller
         return response()->json("data Address berhasil di ubah");
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $Address = Address::findorFail($id);
         $Address->delete();
         return response()->json('telah di hapus');

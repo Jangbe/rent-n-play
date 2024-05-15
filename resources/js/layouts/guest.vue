@@ -13,12 +13,22 @@
         <link href="/guest/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/guest/css/style.css">
 
-        <router-view></router-view>
+        <router-view @aos_init="aos_init"></router-view>
     </div>
 </template>
 
 <script>
 export default {
+    methods: {
+        aos_init: function () {
+            AOS.init({
+                duration: 1000,
+                easing: "ease-in-out",
+                once: true,
+                mirror: false
+            });
+        }
+    },
     mounted() {
         const select = (el, all = false) => {
             el = el.trim()
@@ -166,33 +176,6 @@ export default {
             }
         });
 
-        let productContainer = select('.product-container');
-        if (productContainer) {
-            let productIsotope = new Isotope(productContainer, {
-                itemSelector: '.product-item',
-                layoutMode: 'fitRows'
-            });
-
-            let productFilters = select('#product-filters li', true);
-
-            on('click', '#product-filters li', function (e) {
-                e.preventDefault();
-                productFilters.forEach(function (el) {
-                    el.classList.remove('filter-active');
-                });
-                this.classList.add('filter-active');
-
-                productIsotope.arrange({
-                    filter: this.getAttribute('data-filter')
-                });
-                aos_init();
-            }, true);
-        }
-
-        const productLightbox = GLightbox({
-            selector: '.portfolio-lightbox'
-        });
-
         new Swiper('.product-details-slider', {
             speed: 400,
             autoplay: {
@@ -231,18 +214,7 @@ export default {
             }
         });
 
-        function aos_init() {
-            AOS.init({
-                duration: 1000,
-                easing: "ease-in-out",
-                once: true,
-                mirror: false
-            });
-        }
-
-        aos_init();
-
-        new PureCounter();
+        this.aos_init();
     }
 }
 </script>
