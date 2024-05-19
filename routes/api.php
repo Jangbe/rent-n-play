@@ -6,6 +6,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductTransactionController;
+use App\Http\Controllers\TransactionController;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,3 +57,8 @@ Route::get('product', [ProductController::class, 'index']);
 Route::post('product', [ProductController::class, 'store']);
 Route::put('product/{id}', [ProductController::class, 'update']);
 Route::delete('product/{id}', [ProductController::class, 'destroy']);
+
+Route::get('transaction', [TransactionController::class, 'index']);
+Route::post('transaction', [TransactionController::class, 'store']);
+Route::put('transaction/{id}', [TransactionController::class, 'update']);
+Route::delete('transaction/{id}', [TransactionController::class, 'destroy']);
