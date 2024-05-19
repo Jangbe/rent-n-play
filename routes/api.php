@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTransactionController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,3 +52,14 @@ Route::get('address', [AddressController::class, 'index']);
 Route::post('address', [AddressController::class, 'store']);
 Route::put('address/{id}', [AddressController::class, 'update']);
 Route::delete('address/{id}', [AddressController::class, 'destroy']);
+
+Route::get('transaction', [TransactionController::class, 'index']);
+Route::post('transaction', [TransactionController::class, 'store']);
+Route::put('transaction/{id}', [TransactionController::class, 'update']);
+Route::delete('transaction/{id}', [TransactionController::class, 'destroy']);
+
+Route::get('product-transactions', [ProductTransactionController::class, 'index']);
+Route::post('product-transactions', [ProductTransactionController::class, 'store']);
+Route::get('product-transactions/{id}', [ProductTransactionController::class, 'show']);
+Route::put('product-transactions/{id}', [ProductTransactionController::class, 'update']);
+Route::delete('product-transactions/{id}', [ProductTransactionController::class, 'destroy']);
