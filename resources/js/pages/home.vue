@@ -70,6 +70,15 @@ const filterBy = (filter) => {
 
 const addToCart = (product) => {
     Toast.fire({ title: 'Barang berhasil ditambahkan ke keranjang', icon: 'info' });
+    const carts = JSON.parse(localStorage.getItem('carts') ?? '[]');
+    const index = carts.findIndex(c => c.product_id == product.id);
+    if (index >= 0) {
+        carts[index].quantity++;
+    } else {
+        carts.push({ product_id: product.id, quantity: 1 });
+    }
+    localStorage.setItem('carts', JSON.stringify(carts));
+    console.log(carts);
 }
 </script>
 
@@ -89,12 +98,15 @@ const addToCart = (product) => {
                         <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
                         <li><a class="nav-link scrollto" href="#about">About</a></li>
                         <li><a class="nav-link scrollto" href="#product">Product</a></li>
-                        <li><a class="nav-link scrollto" href="#checkout">Checkout</a></li>
-                        <li v-if="userStore.user == null"><router-link class="getstarted" to="login">Login</router-link>
+                        <li>
+                            <router-link class="nav-link" to="/customer/checkout">Checkout</router-link>
+                        </li>
+                        <li v-if="userStore.user == null">
+                            <router-link class="getstarted" to="login">Login</router-link>
                         </li>
                         <li v-else>
-                            <router-link class="getstarted"
-                                :to="userStore.user.role == 'Admin' ? '/admin/dashboard' : '/customer/dashboard'">Dashboard</router-link>
+                        <router-link class="getstarted"
+                            :to="userStore.user.role == 'Admin' ? '/admin/dashboard' : '/customer/dashboard'">Dashboard</router-link>
                         </li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>

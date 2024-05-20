@@ -28,6 +28,7 @@ class AddressController extends Controller
 
     public function show($user_id)
     {
+        if ($user_id != auth()->id()) return abort(404);
         $addresses = Address::where('user_id', $user_id)->get();
         return response()->json($addresses);
     }

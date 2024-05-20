@@ -15,7 +15,7 @@ const getCustomerDetail = (u) => {
 var modalIdentity = null;
 var modalAddress = null;
 
-const user = ref({});
+const user = ref(userStore?.user ?? {});
 watch(() => userStore.user, (u) => {
     formData.value = { ...u };
     user.value = u;
@@ -352,8 +352,8 @@ const submit = (type) => {
                             <div class="col-8">
                                 <div class="form-group">
                                     <label for="street_name" class="form-label">Nama Jalan</label>
-                                    <input v-model="formDataModal.street_name" id="street_name"
-                                        class="form-control" type="text">
+                                    <input v-model="formDataModal.street_name" id="street_name" class="form-control"
+                                        type="text">
                                 </div>
                             </div>
                         </div>

@@ -5,9 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class transaction extends Model
+class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['transaction_number', 'user_id', 'delivery', 'delivery_fee', 'addresss_id', 'total', 'status', 'order_datetime' ];
+    protected $guarded = ['id'];
+    public $casts = ['order_datetime' => 'datetime'];
+
+    public function transactionDetails()
+    {
+        return $this->hasMany(TransactionDetail::class);
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, TransactionDetail::class);
+    }
 }

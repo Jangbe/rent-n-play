@@ -36,6 +36,7 @@ export default ({ mode }) => {
         resolve: {
             alias: {
                 vue: 'vue/dist/vue.esm-bundler.js',
+                // '@helpers': './resources/js/helpers.js'
             },
         },
     });
