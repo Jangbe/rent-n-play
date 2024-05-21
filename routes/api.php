@@ -49,16 +49,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('transaction', [TransactionController::class, 'index']);
     Route::get('transaction/get-transaction-number', [TransactionController::class, 'getTransactionNumber']);
+    Route::get('transaction/{id}', [TransactionController::class, 'show']);
     Route::post('transaction', [TransactionController::class, 'store']);
     Route::put('transaction/{id}', [TransactionController::class, 'update']);
     Route::delete('transaction/{id}', [TransactionController::class, 'destroy']);
 
-    Route::get('category', [CategoryController::class, 'index']);
+    Route::get('category', [CategoryController::class, 'index'])->withoutMiddleware('auth:sanctum');
     Route::post('category', [CategoryController::class, 'store']);
     Route::put('category/{id}', [CategoryController::class, 'update']);
     Route::delete('category/{id}', [CategoryController::class, 'destroy']);
 
-    Route::get('product', [ProductController::class, 'index']);
+    Route::get('product', [ProductController::class, 'index'])->withoutMiddleware('auth:sanctum');
     Route::post('product', [ProductController::class, 'store']);
     Route::put('product/{id}', [ProductController::class, 'update']);
     Route::delete('product/{id}', [ProductController::class, 'destroy']);

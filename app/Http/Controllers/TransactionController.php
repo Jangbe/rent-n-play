@@ -12,7 +12,7 @@ class TransactionController extends Controller
     public function index()
     {
         $user = request()->user();
-        $transactions = Transaction::with('transactionDetails.product');
+        $transactions = Transaction::with('transactionDetails.product')->latest();
         if ($user->role == 'Customer') {
             $transactions->where('user_id', $user->id);
         }
@@ -52,7 +52,8 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-        $transaction = Transaction::findOrFail($id);
+        $transaction = Transaction::with('transactionDetails.product', 'address')->where('transaction_number', $id)->firstOrFail();
+        if ($transaction->user_id != auth()->id() && auth()->user()->role != 'Admin') return abort(404);
         return response()->json($transaction);
     }
 

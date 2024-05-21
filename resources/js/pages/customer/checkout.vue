@@ -1,9 +1,10 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { Confirm, Toast } from '../../plugins/swal';
 import { useUserStore } from '../../stores/user';
 import { useRouter } from 'vue-router';
 import { number_format } from '../../helpers';
+import modalAddress from '../../components/modal-address.vue';
 
 const user = useUserStore();
 
@@ -25,7 +26,7 @@ const changeQuantity = async (type, cart) => {
         if (isConfirmed) carts.value.splice(carts.value.indexOf(cart), 1);
         else return
     }
-    if (type == '+' && cart.quantity == cart.product.amount - 1) {
+    if (type == '+' && cart.quantity == cart.product.amount) {
         Toast.fire({ title: 'Mencapai batas maks', icon: 'warning' });
         return;
     }
@@ -34,10 +35,14 @@ const changeQuantity = async (type, cart) => {
     localStorage.setItem('carts', JSON.stringify(carts.value));
 }
 const setCart = () => {
-    localStorage.setItem('carts', JSON.stringify(carts.value.map(c => ({ ...c, total: c.quantity * c.product.price }))));
+    localStorage.setItem('carts', JSON.stringify(carts.value.map(c => {
+        if (c.quantity > c.product.amount) c.quantity = c.product.amount;
+        return { ...c, total: c.quantity * c.product.price };
+    })));
 }
 
 const addresses = ref([]);
+const formDataModal = ref({});
 const formData = ref({ delivery_fee: 0 });
 axios.get('transaction/get-transaction-number').then(({ data }) => {
     formData.value.transaction_number = data;
@@ -67,9 +72,20 @@ const submit = () => {
     axios.post('transaction', data).then(({ data }) => {
         localStorage.removeItem('carts');
         Toast.fire({ title: data });
-        router.push('/customer/transaction');
+        router.push('/customer/transaction/' + formData.value.transaction_number);
     }).catch(({ response }) => {
         Toast.fire({ title: response?.data?.message, icon: 'error' });
+    })
+}
+var modal = null;
+onMounted(() => {
+    modal = new bootstrap.Modal(document.querySelector('#modal-address'));
+})
+const submitModal = () => {
+    axios.post('address', formDataModal.value).then(({ data }) => {
+        Toast.fire({ title: data });
+        getAddresses();
+        modal.toggle();
     })
 }
 </script>
@@ -96,8 +112,8 @@ const submit = () => {
                         <div class="card-body pb-2">
                             <h5 class="card-title pb-0 pt-2 mb-0">{{ cart.product.name }}</h5>
                             <p class="card-text mb-0">{{ cart.product.description }}</p>
-                            <div class="d-flex justify-content-between align-items-end">
-                                <div>
+                            <div class="row justify-content-between align-items-end">
+                                <div class="col-md-8 col-12">
                                     <p class="card-text">
                                         <span class="text-muted">{{ number_format(cart.product.price) }}</span> <br>
                                         <span class="fw-bold">Total :
@@ -105,7 +121,7 @@ const submit = () => {
                                         </span>
                                     </p>
                                 </div>
-                                <div>
+                                <div class="col-md-4 col-12">
                                     <div class="input-group">
                                         <button class="btn btn-sm btn-secondary"
                                             @click.prevent="changeQuantity('-', cart)">
@@ -159,22 +175,30 @@ const submit = () => {
                             </div>
                             <div class="form-group" v-if="formData.type == 'delivery'">
                                 <label for="address_id" class="form-label">Alamat</label>
-                                <select id="address_id" v-model="formData.address_id" class="form-select">
-                                    <option v-for="address in addresses" :value="address.id">
-                                        ({{ address.type }}) {{ address.detail }}
-                                    </option>
-                                </select>
+                                <div class="input-group">
+                                    <select id="address_id" v-model="formData.address_id" class="form-select">
+                                        <option v-for="address in addresses" :value="address.id">
+                                            ({{ address.type }}) {{ address.detail }}
+                                        </option>
+                                    </select>
+                                    <button class="btn btn-success" @click="modal.toggle()">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="payment_method" class="form-label">Total</label>
                                 <input id="payment_method" class="form-control" disabled :value="total" />
                             </div>
-                            <button @click="submit" class="btn btn-success w-100 mt-3">Sewa</button>
+                            <button @click="submit" :disabled="carts.length == 0"
+                                class="btn btn-success w-100 mt-3">Sewa</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <modal-address :formData="formDataModal" @submited="submitModal" />
     </div>
 </template>
 

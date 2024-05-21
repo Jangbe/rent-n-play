@@ -1,3 +1,9 @@
+<script setup>
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+</script>
+
 <template>
     <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -33,5 +39,14 @@
                 </li>
             </ul>
         </li><!-- End Master Nav -->
+
+        <li class="nav-item">
+            <router-link active-class="active"
+                :class="{ 'nav-link': true, 'active': route.meta.navActiveLinks == 'admin.transaction' }"
+                to="/admin/transaction">
+                <i class="bi bi-cash"></i>
+                <span>Transaksi</span>
+            </router-link>
+        </li><!-- End Transaction Nav -->
     </ul>
 </template>

@@ -1,7 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useUserStore } from '../stores/user';
 import { Toast } from '../plugins/swal';
+import ModalAddress from '../components/modal-address.vue';
 
 const identities = ref([]);
 const addresses = ref([]);
@@ -15,14 +16,18 @@ const getCustomerDetail = (u) => {
 var modalIdentity = null;
 var modalAddress = null;
 
-const user = ref(userStore?.user ?? {});
-watch(() => userStore.user, (u) => {
+const getData = (u) => {
     formData.value = { ...u };
     user.value = u;
     if (u?.role == 'Customer') getCustomerDetail(u);
     modalIdentity = new bootstrap.Modal(document.querySelector('#modal-identity'));
     modalAddress = new bootstrap.Modal(document.querySelector('#modal-address'));
+}
+const user = ref(userStore?.user ?? {});
+onMounted(() => {
+    if (userStore?.user) getData(userStore.user);
 })
+watch(() => userStore.user, getData);
 
 const preview = ref(null);
 const selectAvatar = () => {
@@ -104,12 +109,6 @@ const submit = (type) => {
                             <img :src="user?.avatar" alt="Profile" class="rounded-circle">
                             <h2>{{ user?.name }}</h2>
                             <h3>{{ user?.role }}</h3>
-                            <!-- <div class="social-links mt-2">
-                                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                            </div> -->
                         </div>
                     </div>
 
@@ -121,11 +120,6 @@ const submit = (type) => {
                         <div class="card-body pt-3">
                             <!-- Bordered Tabs -->
                             <ul class="nav nav-tabs nav-tabs-bordered">
-
-                                <!-- <li class="nav-item">
-                                    <button class="nav-link active" data-bs-toggle="tab"
-                                        data-bs-target="#profile-overview">Overview</button>
-                                </li> -->
 
                                 <li class="nav-item">
                                     <button class="nav-link active" data-bs-toggle="tab"
@@ -328,55 +322,7 @@ const submit = (type) => {
             </div>
         </div>
 
-        <div class="modal fade" id="modal-address">
-            <div class="modal-dialog">
-                <form action="#" class="modal-content" @submit.prevent="submitModal">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Form Alamat</h5>
-                        <button type="button" class="btn-close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="form-group">
-                                    <label for="type" class="form-label">Tipe</label>
-                                    <select v-model="formDataModal.type" id="type" class="form-select">
-                                        <option>Rumah</option>
-                                        <option>Kosan</option>
-                                        <option>Kantor</option>
-                                        <option>Ma'had</option>
-                                        <option>Dan Lain-Lain</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-8">
-                                <div class="form-group">
-                                    <label for="street_name" class="form-label">Nama Jalan</label>
-                                    <input v-model="formDataModal.street_name" id="street_name" class="form-control"
-                                        type="text">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact_name" class="form-label">Nama Kontak</label>
-                            <input v-model="formDataModal.contact_name" id="contact_name" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="contact_phone" class="form-label">Nomer Kontak</label>
-                            <input v-model="formDataModal.contact_phone" id="contact_phone" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="detail" class="form-label">Alamat Lengkap</label>
-                            <textarea v-model="formDataModal.detail" id="detail" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        <button class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <modal-address :formData="formDataModal" @submited="submitModal" />
     </div>
 </template>
 

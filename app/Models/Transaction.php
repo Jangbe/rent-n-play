@@ -21,4 +21,9 @@ class Transaction extends Model
     {
         return $this->belongsToMany(Product::class, TransactionDetail::class);
     }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
 }
