@@ -71,8 +71,20 @@ const submit = () => {
     data.order_datetime = (new Date()).toISOString();
     axios.post('transaction', data).then(({ data }) => {
         localStorage.removeItem('carts');
-        Toast.fire({ title: data });
+        Toast.fire({ title: data.message });
         router.push('/customer/transaction/' + formData.value.transaction_number);
+        if (data.snapToken)
+            snap.pay(data.snapToken, {
+                onSuccess: function (result) {
+                    axios.post(`transaction/${result.order_id.split('-')[1]}/midtrans-callback`, result);
+                },
+                onPending: function (result) {
+                    axios.post(`transaction/${result.order_id.split('-')[1]}/midtrans-callback`, result);
+                },
+                onError: function (result) {
+                    console.log(result);
+                },
+            })
     }).catch(({ response }) => {
         Toast.fire({ title: response?.data?.message, icon: 'error' });
     })
@@ -158,12 +170,12 @@ const submitModal = () => {
                                 <label for="payment_method" class="form-label">Metode Pembayaran</label>
                                 <select id="payment_method" v-model="formData.payment_method" class="form-select">
                                     <option>Cash</option>
-                                    <option>QRis</option>
+                                    <option>Transfer</option>
                                 </select>
                             </div>
                             <div class="form-control mt-2 text-center">
                                 <div class="form-check form-check-inline">
-                                    <label for="delivery" class="form-check-label">Delivery</label>
+                                    <label for="delivery" class="form-check-label">Diantar</label>
                                     <input type="radio" name="type" value="delivery" v-model="formData.type"
                                         id="delivery" class="form-check-input">
                                 </div>

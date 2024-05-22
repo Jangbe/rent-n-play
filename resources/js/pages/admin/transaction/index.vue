@@ -24,6 +24,12 @@ Echo.channel('order-placed')
         transaction.total = transaction.transaction_details.reduce((a, b) => a + b.total, transaction.delivery_fee);
         transactions.value.unshift(transaction);
     })
+Echo.channel('order-status-updated')
+    .listen('OrderStatusUpdatedEvent', ({ transaction: data }) => {
+        data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
+        const index = transactions.value.findIndex(t => t.id == data.id);
+        transactions.value[index] = data;
+    });
 </script>
 
 <template>

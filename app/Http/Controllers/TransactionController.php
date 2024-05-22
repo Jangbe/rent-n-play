@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\InvoicePaid;
 use App\Notifications\OrderPlaced;
 use App\Notifications\OrderStatusUpdated;
 use Illuminate\Http\Request;
@@ -11,6 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
+    public function __construct()
+    {
+        \Midtrans\Config::$serverKey    = config('services.midtrans.serverKey');
+        \Midtrans\Config::$isProduction = config('services.midtrans.isProduction');
+        \Midtrans\Config::$isSanitized  = config('services.midtrans.isSanitized');
+        \Midtrans\Config::$is3ds        = config('services.midtrans.is3ds');
+        \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
+        \Midtrans\Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = 0;
+        \Midtrans\Config::$curlOptions[CURLOPT_HTTPHEADER] = [];
+    }
 
     public function index()
     {
@@ -44,18 +55,59 @@ class TransactionController extends Controller
             'products' => 'required|array|min:1',
         ]);
 
-        DB::transaction(function () use ($validatedData, $request) {
+        $snapToken = DB::transaction(function () use ($validatedData, $request) {
             $transaction = Transaction::create($validatedData);
             $transaction->products()->sync($request->products);
 
             $admin = User::where('role', 'Admin')->get();
-            $transaction->load(['user', 'transactionDetails.product']);
+            $transaction->load(['user', 'transactionDetails.product.category']);
+
             foreach ($admin as $a) {
                 $a->notify(new OrderPlaced($transaction, $admin));
             }
+
+            if ($transaction->payment_method == 'Transfer') {
+                $payload = [
+                    'transaction_details' => [
+                        'order_id' => now()->unix() . '-' . $transaction->transaction_number,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $transaction->user->name,
+                        'email' => $transaction->user->email
+                    ],
+                    'item_details' => $transaction->transactionDetails->map(function ($t) use ($transaction) {
+                        return [
+                            'id' => $transaction->transaction_number . '-' . $t->product->id,
+                            'price' => $t->product->price,
+                            'quantity' => $t->quantity,
+                            'name' => $t->product->name,
+                            'category' => $t->product->category->name,
+                            'merchant_name' => config('app.name')
+                        ];
+                    })->toArray()
+                ];
+                if ($transaction->delivery) {
+                    $payload['item_details'][] = [
+                        'id' => $transaction->transaction_number . ' - Ongkir',
+                        'price' => $transaction->delivery_fee,
+                        'quantity' => 1,
+                        'name' => 'Ongkir'
+                    ];
+                }
+
+                $snapToken = \Midtrans\Snap::getSnapToken($payload);
+                $transaction->update(['snap_token' => $snapToken]);
+
+                return $snapToken;
+            } else {
+                return null;
+            }
         });
 
-        return response()->json('Transaksi berhasil dibuat', 201);
+        return response()->json([
+            'message' => 'Transaksi berhasil dibuat',
+            'snapToken' => $snapToken
+        ], 201);
     }
 
 
@@ -75,9 +127,18 @@ class TransactionController extends Controller
         ]);
 
         $transaction->update($validatedData);
-        $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'transactionDetails.product'])));
+        $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'address', 'transactionDetails.product'])));
 
         return response()->json('Status transaksi berhasil diubah');
+    }
+
+    public function midtransCallback(Request $request, Transaction $transaction)
+    {
+        $response = \Midtrans\Transaction::status($request->get('order_id'));
+        if ($response && $response->fraud_status == 'accept') {
+            $transaction->update(['status' => 'success']);
+            $transaction->user->notify(new InvoicePaid($transaction->load(['user', 'address', 'transactionDetails.product'])));
+        }
     }
 
     public function destroy($id)

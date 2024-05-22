@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { number_format } from '../../../helpers';
+import { Toast } from '../../../plugins/swal';
 
 const route = useRoute();
 const transaction = ref({ total: 0, transaction_details: [] });
@@ -22,12 +23,30 @@ const resolveStatus = (status) => {
 function initPusher() {
     Echo.channel('order-status-updated')
         .listen('OrderStatusUpdatedEvent', ({ transaction: data }) => {
-            data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
-            transaction.value = data;
+            if (data.transaction_number == transaction.value.transaction_number) {
+                data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
+                transaction.value = data;
+            }
         });
 }
 initPusher();
 watch(() => route.params, initPusher);
+const paymentCheckStatus = () => {
+    if (transaction.value.snap_token && transaction.value.status == 'pending')
+        snap.pay(transaction.value.snap_token, {
+            onSuccess: function (result) {
+                axios.post(`transaction/${result.order_id.split('-')[1]}/midtrans-callback`, result);
+            },
+            onPending: function (result) {
+                axios.post(`transaction/${result.order_id.split('-')[1]}/midtrans-callback`, result);
+            },
+            onError: function (result) {
+                console.log(result);
+            },
+        })
+    else
+        Toast.fire({ title: 'Maaf tidak bisa cek status', icon: 'error' });
+}
 </script>
 
 <template>
@@ -100,6 +119,11 @@ watch(() => route.params, initPusher);
                             <p class="card-text mb-0"><b>Total Pembayaran : </b>
                                 {{ number_format(transaction.total) }}
                             </p>
+                            <button class="btn btn-info w-100 mt-2"
+                                v-if="transaction.payment_method == 'Transfer' && transaction.status == 'pending'"
+                                @click="paymentCheckStatus">
+                                Cek Status Pembayaran
+                            </button>
                         </div>
                     </div>
                 </div>

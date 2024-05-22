@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('transaction/{id}', [TransactionController::class, 'show']);
     Route::post('transaction', [TransactionController::class, 'store']);
     Route::put('transaction/{transaction:transaction_number}', [TransactionController::class, 'update']);
+    Route::post('transaction/{transaction:transaction_number}/midtrans-callback', [TransactionController::class, 'midtransCallback']);
     Route::delete('transaction/{id}', [TransactionController::class, 'destroy']);
 
     Route::get('category', [CategoryController::class, 'index'])->withoutMiddleware('auth:sanctum');

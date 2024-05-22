@@ -22,6 +22,17 @@ const resolveStatus = (status) => {
             return 'primary';
     }
 }
+function initPusher() {
+    Echo.channel('order-status-updated')
+        .listen('OrderStatusUpdatedEvent', ({ transaction: data }) => {
+            if (data.transaction_number == transaction.value.transaction_number) {
+                data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
+                transaction.value = data;
+            }
+        });
+}
+initPusher();
+watch(() => route.params, initPusher);
 watch(() => route.params, fetchData);
 const formData = ref({});
 const updateStatus = () => {
