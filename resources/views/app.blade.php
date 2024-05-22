@@ -31,7 +31,13 @@
 
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+    @if (config('services.midtrans.isProduction'))
+        <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">
+        </script>
+    @else
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+    @endif
     <!-- Template Main JS File -->
     @vite(['resources/js/app.js'])
 </body>

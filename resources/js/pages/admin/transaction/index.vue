@@ -6,27 +6,27 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const transactions = ref([]);
 axios.get('transaction').then(({ data }) => {
-    transactions.value = data.map(d => ({ ...d, total: d.transaction_details.reduce((a, b) => a + b.total, d.delivery_fee) }));
+    transactions.value = data;
 })
 const resolveStatus = (status) => {
     switch (status) {
         case 'pending':
             return 'warning';
-        case 'success':
+        case 'paid':
             return 'success';
-        case 'finish':
+        case 'ongoing':
+            return 'secondary';
+        case 'completed':
             return 'primary';
     }
 }
 
 Echo.channel('order-placed')
     .listen('OrderPlacedEvent', ({ transaction }) => {
-        transaction.total = transaction.transaction_details.reduce((a, b) => a + b.total, transaction.delivery_fee);
         transactions.value.unshift(transaction);
     })
 Echo.channel('order-status-updated')
     .listen('OrderStatusUpdatedEvent', ({ transaction: data }) => {
-        data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
         const index = transactions.value.findIndex(t => t.id == data.id);
         transactions.value[index] = data;
     });

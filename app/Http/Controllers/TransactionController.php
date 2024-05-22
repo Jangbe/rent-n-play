@@ -52,6 +52,7 @@ class TransactionController extends Controller
             'delivery_fee' => 'required_if:delivery,1|numeric',
             'address_id' => 'required_if:delivery,1|exists:addresses,id',
             'order_datetime' => 'required|date',
+            'days' => 'required|numeric|min:1',
             'products' => 'required|array|min:1',
         ]);
 
@@ -94,6 +95,14 @@ class TransactionController extends Controller
                         'name' => 'Ongkir'
                     ];
                 }
+                if ($transaction->days > 1) {
+                    $payload['item_details'][] = [
+                        'id' => $transaction->transaction_number . ' - Jumlah Hari',
+                        'price' => $transaction->transactionDetails->reduce(fn ($a, $b) => $a + $b->total, 0),
+                        'quantity' => $transaction->days - 1,
+                        'name' => 'x hari'
+                    ];
+                }
 
                 $snapToken = \Midtrans\Snap::getSnapToken($payload);
                 $transaction->update(['snap_token' => $snapToken]);
@@ -122,11 +131,16 @@ class TransactionController extends Controller
     {
         if ($request->user()->role != 'Admin') return abort(404);
 
-        $validatedData = $request->validate([
+        $request->validate([
             'status' => 'required'
         ]);
 
-        $transaction->update($validatedData);
+        $transaction->status = $request->status;
+        if ($transaction->isDirty() && $request->status == 'ongoing') {
+            $transaction->order_datetime = now();
+        }
+
+        $transaction->save();
         $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'address', 'transactionDetails.product'])));
 
         return response()->json('Status transaksi berhasil diubah');

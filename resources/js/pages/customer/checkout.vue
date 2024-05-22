@@ -55,7 +55,7 @@ const getAddresses = () => {
 if (user?.user) getAddresses();
 watch(() => user?.user, getAddresses);
 const total = computed(() => {
-    return number_format(carts.value.reduce((a, b) => a + b.total, formData.value.delivery_fee));
+    return number_format(carts.value.reduce((a, b) => a + b.total, 0) * (formData.value?.days ?? 1) + formData.value.delivery_fee);
 })
 watch(() => formData.value.type, (type) => {
     formData.value.delivery_fee = type == 'delivery' ? 10000 : 0;
@@ -198,9 +198,20 @@ const submitModal = () => {
                                     </button>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="payment_method" class="form-label">Total</label>
-                                <input id="payment_method" class="form-control" disabled :value="total" />
+
+                            <div class="row">
+                                <div class="col-6 form-group">
+                                    <label for="days" class="form-label">Lama Sewa</label>
+                                    <div class="input-group">
+                                        <input type="number" id="days" min="1" v-model="formData.days"
+                                            class="form-control">
+                                        <span class="input-group-text">Hari</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 form-group">
+                                    <label for="payment_method" class="form-label">Total</label>
+                                    <input id="payment_method" class="form-control" disabled :value="total" />
+                                </div>
                             </div>
                             <button @click="submit" :disabled="carts.length == 0"
                                 class="btn btn-success w-100 mt-3">Sewa</button>

@@ -12,6 +12,14 @@ class Transaction extends Model
     protected $guarded = ['id'];
     public $casts = ['order_datetime' => 'datetime'];
 
+    public $appends = ['total'];
+
+    public function getTotalAttribute()
+    {
+        $total = $this->transactionDetails->reduce(fn ($a, $b) => $a + $b->total, 0);
+        return $total * $this->days + $this->delivery_fee;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
