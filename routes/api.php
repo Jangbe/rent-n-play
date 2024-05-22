@@ -6,11 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProductTransactionController;
 use App\Http\Controllers\TransactionController;
-use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +30,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', [ProfileController::class, 'user']);
     Route::post('/update-profile', [ProfileController::class, 'update_profile']);
     Route::post('/update-password', [ProfileController::class, 'update_password']);
+    Route::post('/read-all-notification', [ProfileController::class, 'read_all_notification']);
+    Route::post('/read-notification/{id}', [ProfileController::class, 'read_notification']);
 
     Route::get('identity', [IdentityController::class, 'index']);
     Route::post('identity', [IdentityController::class, 'store']);
@@ -51,7 +49,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('transaction/get-transaction-number', [TransactionController::class, 'getTransactionNumber']);
     Route::get('transaction/{id}', [TransactionController::class, 'show']);
     Route::post('transaction', [TransactionController::class, 'store']);
-    Route::put('transaction/{id}', [TransactionController::class, 'update']);
+    Route::put('transaction/{transaction:transaction_number}', [TransactionController::class, 'update']);
     Route::delete('transaction/{id}', [TransactionController::class, 'destroy']);
 
     Route::get('category', [CategoryController::class, 'index'])->withoutMiddleware('auth:sanctum');

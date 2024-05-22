@@ -18,6 +18,12 @@ const resolveStatus = (status) => {
             return 'primary';
     }
 }
+
+Echo.channel('order-placed')
+    .listen('OrderPlacedEvent', ({ transaction }) => {
+        transaction.total = transaction.transaction_details.reduce((a, b) => a + b.total, transaction.delivery_fee);
+        transactions.value.unshift(transaction);
+    })
 </script>
 
 <template>
@@ -44,6 +50,7 @@ const resolveStatus = (status) => {
                                 {{ transaction.status }}
                             </span>
                         </h5>
+                        <p class="card-text mb-0"><b>Customer : </b> {{ transaction.user.name }}</p>
                         <p class="card-text mb-0"><b>Metode Pembayaran : </b> {{ transaction.payment_method }}</p>
                         <p class="card-text mb-0"><b>Total Pembayaran : </b>
                             {{ number_format(transaction.total) }}

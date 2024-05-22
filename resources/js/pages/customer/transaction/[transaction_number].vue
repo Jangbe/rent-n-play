@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { number_format } from '../../../helpers';
 
@@ -19,6 +19,15 @@ const resolveStatus = (status) => {
             return 'primary';
     }
 }
+function initPusher() {
+    Echo.channel('order-status-updated')
+        .listen('OrderStatusUpdatedEvent', ({ transaction: data }) => {
+            data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
+            transaction.value = data;
+        });
+}
+initPusher();
+watch(() => route.params, initPusher);
 </script>
 
 <template>

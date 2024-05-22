@@ -8,6 +8,12 @@ const transactions = ref([]);
 axios.get('transaction').then(({ data }) => {
     transactions.value = data.map(d => ({ ...d, total: d.transaction_details.reduce((a, b) => a + b.total, d.delivery_fee) }));
 })
+Echo.channel('order-status-updated')
+    .listen('OrderStatusUpdatedEvent', ({ transaction: data }) => {
+        data.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
+        const index = transactions.value.findIndex(t => t.id == data.id);
+        transactions.value[index] = data;
+    });
 const resolveStatus = (status) => {
     switch (status) {
         case 'pending':

@@ -12,6 +12,11 @@ class Transaction extends Model
     protected $guarded = ['id'];
     public $casts = ['order_datetime' => 'datetime'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function transactionDetails()
     {
         return $this->hasMany(TransactionDetail::class);

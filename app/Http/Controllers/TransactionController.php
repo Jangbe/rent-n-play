@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\User;
+use App\Notifications\OrderPlaced;
+use App\Notifications\OrderStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +15,7 @@ class TransactionController extends Controller
     public function index()
     {
         $user = request()->user();
-        $transactions = Transaction::with('transactionDetails.product')->latest();
+        $transactions = Transaction::with('user', 'transactionDetails.product')->latest();
         if ($user->role == 'Customer') {
             $transactions->where('user_id', $user->id);
         }
@@ -44,6 +47,12 @@ class TransactionController extends Controller
         DB::transaction(function () use ($validatedData, $request) {
             $transaction = Transaction::create($validatedData);
             $transaction->products()->sync($request->products);
+
+            $admin = User::where('role', 'Admin')->get();
+            $transaction->load(['user', 'transactionDetails.product']);
+            foreach ($admin as $a) {
+                $a->notify(new OrderPlaced($transaction, $admin));
+            }
         });
 
         return response()->json('Transaksi berhasil dibuat', 201);
@@ -52,29 +61,23 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-        $transaction = Transaction::with('transactionDetails.product', 'address')->where('transaction_number', $id)->firstOrFail();
+        $transaction = Transaction::with(['user', 'transactionDetails.product', 'address'])->where('transaction_number', $id)->firstOrFail();
         if ($transaction->user_id != auth()->id() && auth()->user()->role != 'Admin') return abort(404);
         return response()->json($transaction);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Transaction $transaction)
     {
-        $transaction = Transaction::findOrFail($id);
+        if ($request->user()->role != 'Admin') return abort(404);
 
-        $request->merge(['user_id' => auth()->id()]);
         $validatedData = $request->validate([
-            'transaction_number' => 'required|string',
-            'user_id' => 'required|exists:users,id',
-            'delivery' => 'required|boolean',
-            'delivery_fee' => 'required|numeric',
-            'address_id' => 'nullable|exists:addresses,id',
-            'total' => 'required|numeric',
-            'order_datetime' => 'required|date',
+            'status' => 'required'
         ]);
 
         $transaction->update($validatedData);
-        $transaction->products()->sync($request->products);
-        return response()->json($transaction);
+        $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'transactionDetails.product'])));
+
+        return response()->json('Status transaksi berhasil diubah');
     }
 
     public function destroy($id)

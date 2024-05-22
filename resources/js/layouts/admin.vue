@@ -47,24 +47,37 @@
 
                         <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                             <i class="bi bi-bell"></i>
-                            <span class="badge bg-primary badge-number">1</span>
+                            <span v-if="newNotification > 0" class="badge bg-primary badge-number">
+                                {{ newNotification }}
+                            </span>
                         </a><!-- End Notification Icon -->
 
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                             <li class="dropdown-header">
-                                You have 1 new notifications
-                                <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                                Kamu punya {{ newNotification }} notifikasi baru
+                                <a href="#" @click.prevent="readAllNotification">
+                                    <span class="badge rounded-pill bg-primary p-2 ms-2">
+                                        Tandai telah dibaca semua
+                                    </span>
+                                </a>
+                                <a href="#" @click.prevent="readAllNotification">
+                                    <span class="badge rounded-pill bg-danger p-2 ms-2">
+                                        Hapus semua
+                                    </span>
+                                </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
 
-                            <li class="notification-item">
-                                <i class="bi bi-exclamation-circle text-warning"></i>
+                            <li v-for="notification in user?.user?.notifications ?? []"
+                                :class="{ 'notification-item': true, 'unread': notification.read_at == null }"
+                                style="cursor: pointer" @click="readNotification(notification)">
+                                <i :class="'bi bi-exclamation-circle text-' + notification.data.icon"></i>
                                 <div>
-                                    <h4>Lorem Ipsum</h4>
-                                    <p>Quae dolorem earum veritatis oditseno</p>
-                                    <p>30 min. ago</p>
+                                    <h4>{{ resolveTitle(notification.type) }}</h4>
+                                    <p>{{ notification.data.message }}</p>
+                                    <p>{{ notification.time ?? '' }}</p>
                                 </div>
                             </li>
 
@@ -85,6 +98,7 @@
                                 <h6>{{ user?.user?.name }}</h6>
                                 <span>{{ user?.user?.role }}</span>
                             </li>
+
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -95,26 +109,7 @@
                                     <span>My Profile</span>
                                 </router-link>
                             </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
 
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                    <i class="bi bi-gear"></i>
-                                    <span>Account Settings</span>
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                                    <i class="bi bi-question-circle"></i>
-                                    <span>Need Help?</span>
-                                </a>
-                            </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -168,10 +163,22 @@ import navAdmin from '../components/nav-admin.vue';
 import navCustomer from '../components/nav-customer.vue';
 
 export default {
-    data: () => ({ user: useUserStore() }),
+    data: () => ({ user: useUserStore(), interval: null, sound: new Audio('/notification.mp3') }),
     components: { navAdmin, navCustomer },
     watch: {
-        '$route.path': function () { setTimeout(this.checkNavActive, 100) }
+        '$route.path': function () { setTimeout(this.checkNavActive, 100) },
+        'user.user': function (user) {
+            Echo.private('App.Models.User.' + user.id)
+                .notification((notification) => {
+                    this.sound.play();
+                    this.user.user.notifications.unshift(notification);
+                })
+        }
+    },
+    computed: {
+        newNotification: function () {
+            return this.user?.user?.notifications?.filter(n => n.read_at == null)?.length ?? 0;
+        }
     },
     methods: {
         checkNavActive: function () {
@@ -192,9 +199,38 @@ export default {
                 window.axios.defaults.headers.common['Authorization'] = null;
                 this.$router.replace('/login');
             })
+        },
+        resolveTitle: (type) => {
+            switch (type) {
+                case 'App\\Notifications\\OrderPlaced':
+                    return 'Pesanan Baru';
+                default:
+                    return 'Notifikasi Baru';
+            }
+        },
+        readAllNotification: function () {
+            axios.post('read-all-notification').then(({ data }) => {
+                this.user.user.notifications = data;
+            })
+        },
+        readNotification: function (notification) {
+            axios.post('read-notification/' + notification.id).then(({ data }) => {
+                notification.read_at = data.read_at;
+                if (notification.data.url)
+                    this.$router.push(notification.data.url)
+            })
         }
     },
+    beforeUnmount() {
+        clearInterval(this.interval);
+    },
     mounted() {
+        this.interval = setInterval(() => {
+            this.user?.user?.notifications.map(n => {
+                n.time = moment(n.created_at).fromNow();
+                return n;
+            })
+        }, 1000);
         this.checkNavActive();
         /**
          * Easy selector helper function
@@ -400,3 +436,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.unread {
+    background: rgba(0, 0, 0, .1)
+}
+</style>

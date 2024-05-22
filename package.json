@@ -11,7 +11,9 @@
         "@vitejs/plugin-vue-jsx": "^2.1.1",
         "axios": "^1.6.4",
         "bootstrap": "^5.2.3",
+        "laravel-echo": "^1.16.1",
         "laravel-vite-plugin": "^1.0.0",
+        "pusher-js": "^8.4.0-rc2",
         "sass": "^1.56.1",
         "vite": "^3.2.4",
         "vite-plugin-pages": "^0.27.1",
@@ -21,6 +23,8 @@
     "dependencies": {
         "datatables.net-bs5": "^2.0.7",
         "datatables.net-vue3": "^3.0.1",
+        "moment": "^2.30.1",
+        "moment-duration-format": "^2.3.2",
         "pinia": "^2.1.7",
         "sweetalert2": "^11.10.8",
         "vue-router": "^4.3.0"

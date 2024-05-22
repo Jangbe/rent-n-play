@@ -1,15 +1,17 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { number_format } from '../../../helpers';
+import { Toast } from '../../../plugins/swal';
 
 const route = useRoute();
 const transaction = ref({ total: 0, transaction_details: [] });
-axios.get('transaction/' + route.params.transaction_number).then(({ data }) => {
+const fetchData = () => axios.get('transaction/' + route.params.transaction_number).then(({ data }) => {
     formData.value = { ...data };
     transaction.value = data;
     transaction.value.total = data.transaction_details.reduce((a, b) => a + b.total, data.delivery_fee);
 })
+fetchData();
 const resolveStatus = (status) => {
     switch (status) {
         case 'pending':
@@ -20,7 +22,14 @@ const resolveStatus = (status) => {
             return 'primary';
     }
 }
+watch(() => route.params, fetchData);
 const formData = ref({});
+const updateStatus = () => {
+    axios.put('transaction/' + route.params.transaction_number, formData.value).then(({ data }) => {
+        Toast.fire({ title: data });
+        transaction.value.status = formData.value.status;
+    })
+}
 </script>
 
 <template>
@@ -64,6 +73,7 @@ const formData = ref({});
                                     {{ transaction.status }}
                                 </span>
                             </h5>
+                            <p class="card-text mb-0"><b>Customer : </b> {{ transaction?.user?.name }}</p>
                             <p class="card-text mb-0"><b>Metode Pembayaran : </b> {{ transaction.payment_method }}</p>
                             <p class="card-text mb-0"><b>Diantar : </b> {{ transaction.delivery ? 'Ya' : 'Tidak' }}</p>
                             <p class="card-text mb-0" v-if="transaction.delivery"><b>Alamat : </b><br>
@@ -100,7 +110,7 @@ const formData = ref({});
                                         <option value="success">Dibayar</option>
                                         <option value="finish">Selesai</option>
                                     </select>
-                                    <button class="btn btn-success">Simpan</button>
+                                    <button class="btn btn-success" @click="updateStatus">Simpan</button>
                                 </div>
                             </div>
                         </div>

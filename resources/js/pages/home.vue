@@ -78,7 +78,6 @@ const addToCart = (product) => {
         carts.push({ product_id: product.id, quantity: 1 });
     }
     localStorage.setItem('carts', JSON.stringify(carts));
-    console.log(carts);
 }
 </script>
 

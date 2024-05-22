@@ -9,7 +9,7 @@ class ProfileController extends Controller
 {
     public function user(Request $request)
     {
-        return $request->user();
+        return $request->user()->load(['notifications']);
     }
 
     public function update_profile(Request $request)
@@ -36,5 +36,18 @@ class ProfileController extends Controller
         ]);
         $request->user()->update(['password' => bcrypt($request->password)]);
         return response()->json('Katasandi berhasil diupdate');
+    }
+
+    public function read_all_notification(Request $request)
+    {
+        $request->user()->notifications()->update(['read_at' => now()]);
+        return response()->json($request->user()->notifications);
+    }
+
+    public function read_notification(Request $request, $id)
+    {
+        $notification = $request->user()->notifications()->find($id);
+        $notification->markAsRead();
+        return response()->json($notification);
     }
 }
