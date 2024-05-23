@@ -8,10 +8,11 @@
 <script setup>
 import { ref } from 'vue';
 import { Toast } from '../plugins/swal';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '../stores/user';
 
 const user = useUserStore();
+const route = useRoute();
 const router = useRouter();
 const formData = ref({});
 
@@ -20,7 +21,9 @@ const submit = () => {
         localStorage.setItem('accessToken', data.access_token);
         window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
         await user.getUser();
-        if (user.user.role == 'Admin')
+        if (route.query.to)
+            router.replace(route.query.to)
+        else if (user.user.role == 'Admin')
             router.replace('/admin/dashboard');
         else
             router.replace('/customer/home');
@@ -39,7 +42,9 @@ const oAuth = (provider) => {
             localStorage.setItem('accessToken', event.data);
             window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + event.data;
             await user.getUser();
-            if (user.user.role == 'Admin')
+            if (route.query.to)
+                router.replace(route.query.to)
+            else if (user.user.role == 'Admin')
                 router.replace('/admin/dashboard');
             else
                 router.replace('/customer/home');

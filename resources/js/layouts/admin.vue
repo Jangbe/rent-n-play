@@ -197,7 +197,7 @@ export default {
             }).finally(() => {
                 localStorage.removeItem('accessToken');
                 window.axios.defaults.headers.common['Authorization'] = null;
-                this.$router.replace('/login');
+                this.$router.replace('/home');
             })
         },
         resolveTitle: (type) => {

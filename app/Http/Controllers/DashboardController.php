@@ -85,15 +85,19 @@ class DashboardController extends Controller
         return compact('series', 'categories');
     }
 
-    private function productPopular()
+    public function popularProduct()
     {
-        return Product::whereHas('transactionDetails', function ($q) {
+        $products = Product::with('category')
+            ->withCount(['transactionDetails as sold' => function ($q) {
+                $q->whereHas('transaction', fn ($t) => $t->where('status', '!=', 'pending'));
+            }])->withSum('transactionDetails as revenue', 'total', function ($q) {
+                $q->whereHas('transaction', fn ($t) => $t->where('status', '!=', 'pending'));
+            });
+        $all = request()->get('all');
+        if (!$all) $products->whereHas('transactionDetails', function ($q) {
             $q->whereHas('transaction', fn ($t) => $t->where('status', '!=', 'pending'));
-        })->withCount(['transactionDetails as sold' => function ($q) {
-            $q->whereHas('transaction', fn ($t) => $t->where('status', '!=', 'pending'));
-        }])->withSum('transactionDetails as revenue', 'total', function ($q) {
-            $q->whereHas('transaction', fn ($t) => $t->where('status', '!=', 'pending'));
-        })->orderBy('sold', 'desc')->limit(10)->get();
+        });
+        return $products->orderBy('sold', 'desc')->limit(10)->get();
     }
 
     public function admin(Request $request)
@@ -121,8 +125,14 @@ class DashboardController extends Controller
 
         $reports = $this->reports();
 
-        $products = $this->productPopular();
+        $products = $this->popularProduct();
 
         return response()->json(compact('transaction', 'income', 'customer', 'reports', 'products'));
+    }
+
+    public function popularProductShow($id)
+    {
+        $product = Product::with('category')->find($id);
+        return response()->json($product);
     }
 }

@@ -2422,3 +2422,53 @@ section {
   font-size: 13px;
   color: #012970;
 }
+
+.header .logo span {
+  color: #fff;
+}
+
+#navbar li a {
+  color: #aaa;
+}
+
+#navbar li:hover a,
+#navbar li a.active {
+  color: #fff !important;
+}
+
+.hero h1,
+.hero h2 {
+  color: #fff;
+}
+
+.header.header-scrolled {
+  background-color: #031c32;
+}
+
+section {
+  background-color: #031c32;
+}
+
+.section-header h2 {
+  color: #fff;
+}
+
+.section-header p {
+  color: #dfdfdf;
+}
+
+.product #product-filters {
+  background: transparent;
+}
+
+.product #product-filters li {
+  color: #fff;
+}
+
+.navbar .getstarted {
+  color: #fff !important;
+}
+
+.navbar-mobile ul {
+  background-color: #000;
+}

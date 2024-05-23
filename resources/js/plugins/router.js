@@ -13,8 +13,8 @@ router.beforeEach(to => {
 
     if (to.meta.redirectIfLoggedIn && isLoggedIn) {
         return '/home';
-    } else if (!isLoggedIn) {
-        // return { name: 'login', query: { to: to.name !== 'home' ? to.fullPath : undefined } }
+    } else if (!isLoggedIn && !to.meta.layout == 'admin') {
+        return { name: 'login', query: { to: to.fullPath } }
     }
 })
 

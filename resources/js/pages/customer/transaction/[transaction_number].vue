@@ -84,14 +84,17 @@ const paymentCheckStatus = () => {
         <section class="section transaction">
             <div class="row">
                 <div class="col-md-6 col-12 order-md-2">
-                    <div class="card flex-row align-items-center mb-2" v-for="cart in transaction.transaction_details">
+                    <div class="card bg-white flex-row align-items-center mb-2"
+                        v-for="cart in transaction.transaction_details">
                         <img :src="'/storage/' + cart.product.picture" :alt="cart.product.picture" class="card-img-left"
                             style="max-width: 30px; max-width: 100px;" />
                         <div class="card-body pb-2">
                             <h5 class="card-title pb-0 pt-2 mb-0">{{ cart.product.name }}</h5>
                             <p class="card-text mb-0">{{ cart.product.description }}</p>
                             <p class="card-text">
-                                <span class="text-muted">{{ number_format(cart.product.price) }} x {{ cart.quantity }}</span>
+                                <span class="text-muted">
+                                    {{ number_format(cart.product.price) }} x {{ cart.quantity }}
+                                </span>
                                 <br />
                                 <span class="fw-bold">
                                     Total :
@@ -102,7 +105,7 @@ const paymentCheckStatus = () => {
                     </div>
                 </div>
                 <div class="col-md-6 col-12 order-md-1">
-                    <div class="card mb-2">
+                    <div class="card bg-white mb-2">
                         <div class="card-body">
                             <h5 class="card-title mb-0 pb-2">
                                 <b>No Transaksi :</b>
@@ -117,19 +120,19 @@ const paymentCheckStatus = () => {
                                     <div class="d-flex justify-content-center align-items-center text-center"
                                         style="gap: 10px;">
                                         <div class="box">
-                                            <p>{{ days }}</p>
+                                            <p>{{ ('0' + days).substr(-2, 2) }}</p>
                                             <span>Hari</span>
                                         </div>:
                                         <div class="box">
-                                            <p>{{ hours }}</p>
+                                            <p>{{ ('0' + hours).substr(-2, 2) }}</p>
                                             <span>Jam</span>
                                         </div>:
                                         <div class="box">
-                                            <p>{{ minutes }}</p>
+                                            <p>{{ ('0' + minutes).substr(-2, 2) }}</p>
                                             <span>Menit</span>
                                         </div>:
                                         <div class="box">
-                                            <p>{{ seconds }}</p>
+                                            <p>{{ ('0' + seconds).substr(-2, 2) }}</p>
                                             <span>Detik</span>
                                         </div>
                                     </div>

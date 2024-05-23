@@ -1,31 +1,3 @@
-<style scoped>
-.header .logo span {
-    color: #fff;
-}
-
-#navbar li a {
-    color: #aaa !important;
-}
-
-#navbar li:hover a,
-#navbar li a.active {
-    color: #fff !important;
-}
-
-.hero h1,
-.hero h2 {
-    color: #fff;
-}
-
-.header.header-scrolled {
-    background-color: #031c32;
-}
-
-section {
-    background-color: #031c32;
-}
-</style>
-
 <script setup>
 import { ref, onMounted, defineEmits } from 'vue';
 import { Toast } from '../plugins/swal';
@@ -38,7 +10,7 @@ const products = ref([]);
 var productIsotope = null;
 const fetchData = async () => {
     await axios.get('category').then(({ data }) => categories.value = data);
-    await axios.get('product').then(({ data }) => products.value = data);
+    await axios.get('popular-product?all=true').then(({ data }) => products.value = data);
     const productLightbox = GLightbox({
         selector: '.product-lightbox'
     });
@@ -83,37 +55,6 @@ const addToCart = (product) => {
 
 <template>
     <div>
-        <!-- ======= Header ======= -->
-        <header id="header" class="header fixed-top">
-            <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-
-                <a href="index.html" class="logo d-flex align-items-center">
-                    <img src="/guest/img/logo.png" alt="">
-                    <span>Rent N Play</span>
-                </a>
-
-                <nav id="navbar" class="navbar">
-                    <ul>
-                        <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
-                        <li><a class="nav-link scrollto" href="#about">About</a></li>
-                        <li><a class="nav-link scrollto" href="#product">Product</a></li>
-                        <li>
-                            <router-link class="nav-link" to="/customer/checkout">Checkout</router-link>
-                        </li>
-                        <li v-if="userStore.user == null">
-                            <router-link class="getstarted" to="login">Login</router-link>
-                        </li>
-                        <li v-else>
-                        <router-link class="getstarted"
-                            :to="userStore.user.role == 'Admin' ? '/admin/dashboard' : '/customer/home'">Dashboard</router-link>
-                        </li>
-                    </ul>
-                    <i class="bi bi-list mobile-nav-toggle"></i>
-                </nav><!-- .navbar -->
-
-            </div>
-        </header><!-- End Header -->
-
         <!-- ======= Hero Section ======= -->
         <section id="hero" class="hero d-flex align-items-center"
             style="background: url(/guest/img/background.png); background-size: cover;">
@@ -188,7 +129,7 @@ const addToCart = (product) => {
 
                     <header class="section-header">
                         <h2>Produk</h2>
-                        <p>Produk terbaru kami</p>
+                        <p>Produk terpopuler kami</p>
                     </header>
 
                     <div class="row" data-aos="fade-up" data-aos-delay="100">
@@ -215,7 +156,7 @@ const addToCart = (product) => {
                                     <div class="product-links">
                                         <a :href="'/storage/' + product.picture" data-gallery="productGallery"
                                             class="product-lightbox" :title="product.description"><i
-                                                class="bi bi-plus"></i></a>
+                                                class="bi bi-info"></i></a>
                                         <router-link :to="'/product/' + product.id" title="Lihat Detail">
                                             <i class="bi bi-link"></i>
                                         </router-link>
@@ -239,8 +180,8 @@ const addToCart = (product) => {
                 <div class="container" data-aos="fade-up">
 
                     <header class="section-header">
-                        <h2>Testimonials</h2>
-                        <p>What they are saying about us</p>
+                        <h2>Testimoni</h2>
+                        <p>Apa yang mereka katakan tentang kami</p>
                     </header>
 
                     <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="200">
@@ -505,82 +446,6 @@ const addToCart = (product) => {
             </section><!-- End Contact Section -->
 
         </main><!-- End #main -->
-
-        <!-- ======= Footer ======= -->
-        <footer id="footer" class="footer">
-
-            <div class="footer-top">
-                <div class="container">
-                    <div class="row gy-4">
-                        <div class="col-lg-5 col-md-12 footer-info">
-                            <a href="index.html" class="logo d-flex align-items-center">
-                                <img src="/guest/img/logo.png" alt="">
-                                <span>FlexStart</span>
-                            </a>
-                            <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna
-                                derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
-                            <div class="social-links mt-3">
-                                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-2 col-6 footer-links">
-                            <h4>Useful Links</h4>
-                            <ul>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Home</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Privacy policy</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-lg-2 col-6 footer-links">
-                            <h4>Our Services</h4>
-                            <ul>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Web Design</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Web Development</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Product Management</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Marketing</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Graphic Design</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-lg-3 col-md-12 footer-checkout text-center text-md-start">
-                            <h4>Contact Us</h4>
-                            <p>
-                                A108 Adam Street <br>
-                                New York, NY 535022<br>
-                                United States <br><br>
-                                <strong>Phone:</strong> +1 5589 55488 55<br>
-                                <strong>Email:</strong> info@example.com<br>
-                            </p>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <div class="copyright">
-                    &copy; Copyright <strong><span>Kelompok 1</span></strong>. All Rights Reserved
-                </div>
-                <div class="credits">
-                    <!-- All the links in the footer should remain intact. -->
-                    <!-- You can delete the links only if you purchased the pro version. -->
-                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                    <!-- Purchase the pro version with working PHP/AJAX checkout form: https://bootstrapmade.com/flexstart-bootstrap-startup-template/ -->
-                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-                </div>
-            </div>
-        </footer><!-- End Footer -->
-
-        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-                class="bi bi-arrow-up-short"></i></a>
     </div>
 </template>
 
