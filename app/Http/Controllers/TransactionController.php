@@ -35,7 +35,7 @@ class TransactionController extends Controller
 
     public function getTransactionNumber()
     {
-        $last = Transaction::select('transaction_number')->latest()->first();
+        $last = Transaction::select('transaction_number')->whereDate('created_at', now())->latest()->first();
         $number = str($last->transaction_number ?? '0000')->substr(-4, 4)->toInteger();
         $number = str($number + 1)->prepend('000')->substr(-4, 4)->prepend('TRX' . now()->format('Ymd'));
         return response()->json($number);
@@ -150,7 +150,7 @@ class TransactionController extends Controller
     {
         $response = \Midtrans\Transaction::status($request->get('order_id'));
         if ($response && $response->fraud_status == 'accept') {
-            $transaction->update(['status' => 'success']);
+            $transaction->update(['status' => 'paid']);
             $transaction->user->notify(new InvoicePaid($transaction->load(['user', 'address', 'transactionDetails.product'])));
         }
     }

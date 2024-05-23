@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="pagetitle">
-            <h1>Dashboard</h1>
+            <h1>Halaman Utama</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><router-link to="/home">Home</router-link></li>
-                    <li class="breadcrumb-item active">Dashboard</li>
+                    <li class="breadcrumb-item active">Halaman Utama</li>
                 </ol>
             </nav>
         </div><!-- End Page Title -->

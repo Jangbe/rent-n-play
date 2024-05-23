@@ -92,7 +92,7 @@ const submit = (type) => {
             <h1>Profile</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><router-link to="/customer/dashboard">Home</router-link></li>
+                    <li class="breadcrumb-item"><router-link to="/customer/home">Home</router-link></li>
                     <li class="breadcrumb-item">Users</li>
                     <li class="breadcrumb-item active">Profile</li>
                 </ol>
@@ -133,10 +133,10 @@ const submit = (type) => {
                                 </li>
 
                                 <template v-if="user.role == 'Customer'">
-                                    <li class="nav-item">
+                                    <!-- <li class="nav-item">
                                         <button class="nav-link" data-bs-toggle="tab"
                                             data-bs-target="#profile-add-identity">Tambah Identitas / Jaminan</button>
-                                    </li>
+                                    </li> -->
 
                                     <li class="nav-item">
                                         <button class="nav-link" data-bs-toggle="tab"
@@ -231,7 +231,7 @@ const submit = (type) => {
 
                                 </div>
 
-                                <div class="tab-pane fade pt-3" id="profile-add-identity"
+                                <!-- <div class="tab-pane fade pt-3" id="profile-add-identity"
                                     v-if="user.role == 'Customer'">
                                     <button class="btn btn-sm btn-primary" @click="openModal('create', 'identity')">
                                         Tambah Identitas
@@ -251,7 +251,7 @@ const submit = (type) => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="tab-pane fade pt-3" id="profile-add-address" v-if="user.role == 'Customer'">
                                     <button class="btn btn-sm btn-primary" @click="openModal('create', 'address')">

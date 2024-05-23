@@ -105,7 +105,7 @@ const addToCart = (product) => {
                         </li>
                         <li v-else>
                         <router-link class="getstarted"
-                            :to="userStore.user.role == 'Admin' ? '/admin/dashboard' : '/customer/dashboard'">Dashboard</router-link>
+                            :to="userStore.user.role == 'Admin' ? '/admin/dashboard' : '/customer/home'">Dashboard</router-link>
                         </li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>

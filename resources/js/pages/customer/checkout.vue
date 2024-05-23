@@ -108,7 +108,7 @@ const submitModal = () => {
             <h1>Checkout</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><router-link to="/customer/dashboard">Home</router-link></li>
+                    <li class="breadcrumb-item"><router-link to="/customer/home">Home</router-link></li>
                     <li class="breadcrumb-item active">Checkout</li>
                 </ol>
             </nav>

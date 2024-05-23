@@ -11,8 +11,22 @@ class Product extends Model
 
     protected $fillable = ['category_id', 'name', 'description', 'amount', 'price', 'picture'];
 
+    public $appends = ['availableStock'];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function transactionDetails()
+    {
+        return $this->hasMany(TransactionDetail::class);
+    }
+
+    public function getAvailableStockAttribute()
+    {
+        return $this->amount - $this->transactionDetails()
+            ->join('transactions', 'transactions.id', '=', 'transaction_detail.transaction_id')
+            ->where('status', 'ongoing')->count();
     }
 }

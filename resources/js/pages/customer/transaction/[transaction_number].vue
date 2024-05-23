@@ -70,7 +70,7 @@ const paymentCheckStatus = () => {
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <router-link to="/customer/dashboard">Home</router-link>
+                        <router-link to="/customer/home">Home</router-link>
                     </li>
                     <li class="breadcrumb-item">
                         <router-link to="/customer/transaction">Transaksi</router-link>
@@ -91,7 +91,7 @@ const paymentCheckStatus = () => {
                             <h5 class="card-title pb-0 pt-2 mb-0">{{ cart.product.name }}</h5>
                             <p class="card-text mb-0">{{ cart.product.description }}</p>
                             <p class="card-text">
-                                <span class="text-muted">{{ number_format(cart.product.price) }}</span>
+                                <span class="text-muted">{{ number_format(cart.product.price) }} x {{ cart.quantity }}</span>
                                 <br />
                                 <span class="fw-bold">
                                     Total :

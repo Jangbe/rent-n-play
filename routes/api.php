@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -32,6 +33,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/update-password', [ProfileController::class, 'update_password']);
     Route::post('/read-all-notification', [ProfileController::class, 'read_all_notification']);
     Route::post('/read-notification/{id}', [ProfileController::class, 'read_notification']);
+
+    Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 
     Route::get('identity', [IdentityController::class, 'index']);
     Route::post('identity', [IdentityController::class, 'store']);

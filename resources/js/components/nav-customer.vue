@@ -8,9 +8,9 @@ const route = useRoute();
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <router-link active-class="active" class="nav-link" to="/customer/dashboard">
-                <i class="bi bi-grid"></i>
-                <span>Dashboard</span>
+            <router-link active-class="active" class="nav-link" to="/customer/home">
+                <i class="bi bi-house"></i>
+                <span>Halaman Utama</span>
             </router-link>
         </li><!-- End Dashboard Nav -->
 

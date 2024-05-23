@@ -23,7 +23,7 @@ const submit = () => {
         if (user.user.role == 'Admin')
             router.replace('/admin/dashboard');
         else
-            router.replace('/customer/dashboard');
+            router.replace('/customer/home');
     }).catch(({ response }) => {
         if (response?.data) {
             Toast.fire({ title: response.data.message, icon: 'error' });
@@ -42,7 +42,7 @@ const oAuth = (provider) => {
             if (user.user.role == 'Admin')
                 router.replace('/admin/dashboard');
             else
-                router.replace('/customer/dashboard');
+                router.replace('/customer/home');
         }
     })
 }

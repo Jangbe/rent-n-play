@@ -33,7 +33,7 @@ const resolveStatus = (status) => {
             <h1>Transaksi</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><router-link to="/customer/dashboard">Home</router-link></li>
+                    <li class="breadcrumb-item"><router-link to="/customer/home">Home</router-link></li>
                     <li class="breadcrumb-item active">Transaksi</li>
                 </ol>
             </nav>
@@ -41,7 +41,7 @@ const resolveStatus = (status) => {
 
         <section class="section checkout row">
             <h2 class="text-muted">Riwayat Transaksi</h2>
-            <div class="col-md-7 col-12 mx-auto" v-for="transaction in transactions">
+            <div class="col-md-6 col-12" v-for="transaction in transactions">
                 <div class="card mb-2" style="cursor: pointer;"
                     @click="router.push('transaction/' + transaction.transaction_number)">
                     <div class="card-body">

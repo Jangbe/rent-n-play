@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { number_format } from '../../../helpers';
 import { useRouter } from 'vue-router';
+import moment from 'moment/min/moment-with-locales.min.js';
+moment.locale('id');
 
 const router = useRouter();
 const transactions = ref([]);
@@ -38,7 +40,7 @@ Echo.channel('order-status-updated')
             <h1>Transaksi</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><router-link to="/customer/dashboard">Home</router-link></li>
+                    <li class="breadcrumb-item"><router-link to="/customer/home">Home</router-link></li>
                     <li class="breadcrumb-item active">Transaksi</li>
                 </ol>
             </nav>
@@ -46,7 +48,7 @@ Echo.channel('order-status-updated')
 
         <section class="section checkout row">
             <h2 class="text-muted">Riwayat Transaksi</h2>
-            <div class="col-md-7 col-12 mx-auto" v-for="transaction in transactions">
+            <div class="col-md-6 col-12" v-for="transaction in transactions">
                 <div class="card mb-2" style="cursor: pointer;"
                     @click="router.push('transaction/' + transaction.transaction_number)">
                     <div class="card-body">
@@ -58,6 +60,7 @@ Echo.channel('order-status-updated')
                         </h5>
                         <p class="card-text mb-0"><b>Customer : </b> {{ transaction.user.name }}</p>
                         <p class="card-text mb-0"><b>Metode Pembayaran : </b> {{ transaction.payment_method }}</p>
+                        <p class="card-text mb-0"><b>Dibuat : </b> {{ moment(transaction.created_at).format('LLLL') }}</p>
                         <p class="card-text mb-0"><b>Total Pembayaran : </b>
                             {{ number_format(transaction.total) }}
                         </p>
