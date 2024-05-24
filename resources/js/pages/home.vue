@@ -2,6 +2,7 @@
 import { ref, onMounted, defineEmits } from 'vue';
 import { Toast } from '../plugins/swal';
 import { useUserStore } from '../stores/user';
+import { number_format } from '../helpers';
 
 const userStore = useUserStore();
 const emit = defineEmits(['aos_init']);
@@ -152,6 +153,7 @@ const addToCart = (product) => {
                                 <img :src="'/storage/' + product.picture" class="img-fluid" alt="">
                                 <div class="product-info">
                                     <h4>{{ product.name }}</h4>
+                                    <p>{{ number_format(product.price) }}</p>
                                     <p>{{ product.category.name }}</p>
                                     <div class="product-links">
                                         <a :href="'/storage/' + product.picture" data-gallery="productGallery"

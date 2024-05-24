@@ -5,6 +5,7 @@ import { useUserStore } from '../../stores/user';
 import { useRouter } from 'vue-router';
 import { number_format } from '../../helpers';
 import modalAddress from '../../components/modal-address.vue';
+import distance from '../../components/distance.vue';
 
 const user = useUserStore();
 
@@ -41,6 +42,7 @@ const setCart = () => {
     })));
 }
 
+const address = ref({});
 const addresses = ref([]);
 const formDataModal = ref({});
 const formData = ref({ delivery_fee: 0 });
@@ -57,8 +59,8 @@ watch(() => user?.user, getAddresses);
 const total = computed(() => {
     return number_format(carts.value.reduce((a, b) => a + b.total, 0) * (formData.value?.days ?? 1) + formData.value.delivery_fee);
 })
-watch(() => formData.value.type, (type) => {
-    formData.value.delivery_fee = type == 'delivery' ? 10000 : 0;
+watch(() => formData.value.shipping_method, (type) => {
+    if (type != 'delivery') formData.value.delivery_fee = 0;
 })
 const router = useRouter();
 const submit = () => {
@@ -66,7 +68,7 @@ const submit = () => {
     for (let i in formData.value) {
         data[i] = formData.value[i];
     }
-    data.delivery = formData.value.type == 'delivery' ? 1 : 0;
+    data.delivery = formData.value.shipping_method == 'delivery' ? 1 : 0;
     data.products = carts.value;
     data.order_datetime = (new Date()).toISOString();
     axios.post('transaction', data).then(({ data }) => {
@@ -100,6 +102,9 @@ const submitModal = () => {
         modal.toggle();
     })
 }
+watch(() => formData.value.address_id, (id) => {
+    address.value = addresses.value.find(a => a.id == id);
+})
 </script>
 
 <template>
@@ -151,6 +156,9 @@ const submitModal = () => {
                             </div>
                         </div>
                     </div>
+                    <div class="alert alert-info text-center py-2">
+                        <h3 class="my-0 py-0">Subtotal : {{ number_format(carts.reduce((a, b) => a + b.total, 0)) }}</h3>
+                    </div>
                     <div class="alert alert-warning" v-if="carts.length == 0">
                         Belum ada barang di keranjang, silahkan pilih terlebih dahulu!...
                     </div>
@@ -162,35 +170,63 @@ const submitModal = () => {
                             <h5>{{ user?.user?.email }}</h5>
                         </h3>
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="transaction_number" class="form-label">Nomor Transaksi</label>
-                                <input type="text" disabled v-model="formData.transaction_number" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="payment_method" class="form-label">Metode Pembayaran</label>
-                                <select id="payment_method" v-model="formData.payment_method" class="form-select">
-                                    <option>Cash</option>
-                                    <option>Transfer</option>
-                                </select>
-                            </div>
-                            <div class="form-control mt-2 text-center">
-                                <div class="form-check form-check-inline">
-                                    <label for="delivery" class="form-check-label">Diantar</label>
-                                    <input type="radio" name="type" value="delivery" v-model="formData.type"
-                                        id="delivery" class="form-check-input">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="form-group mb-2">
+                                        <label for="transaction_number" class="form-label">Nomor Transaksi</label>
+                                        <input type="text" disabled v-model="formData.transaction_number"
+                                            class="form-control">
+                                    </div>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <label for="take" class="form-check-label">Diambil</label>
-                                    <input type="radio" name="type" value="take" v-model="formData.type" id="take"
-                                        class="form-check-input">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="payment_method" class="form-label">Pembayaran</label>
+                                        <select id="payment_method" v-model="formData.payment_method"
+                                            class="form-select">
+                                            <option value="Cash">Tunai</option>
+                                            <option>Transfer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="shipping_method" class="form-label">Pengiriman</label>
+                                        <select id="shipping_method" v-model="formData.shipping_method"
+                                            class="form-select">
+                                            <option value="pick-up">Diambil</option>
+                                            <option value="delivery">Diantar</option>
+                                        </select>
+                                        <!-- <div class="form-control text-center">
+                                            <div class="form-check form-check-inline">
+                                                <label for="delivery" class="form-check-label">Diantar</label>
+                                                <input type="radio" name="type" value="delivery" v-model="formData.shipping_method"
+                                                    id="delivery" class="form-check-input">
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <label for="take" class="form-check-label">Diambil</label>
+                                                <input type="radio" name="type" value="take" v-model="formData.shipping_method" id="take"
+                                                    class="form-check-input">
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="days" class="form-label">Lama Sewa</label>
+                                        <div class="input-group">
+                                            <input type="number" id="days" min="1" v-model="formData.days"
+                                                class="form-control">
+                                            <span class="input-group-text">Hari</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group" v-if="formData.type == 'delivery'">
+                            <div class="form-group" v-if="formData.shipping_method == 'delivery'">
                                 <label for="address_id" class="form-label">Alamat</label>
                                 <div class="input-group">
                                     <select id="address_id" v-model="formData.address_id" class="form-select">
                                         <option v-for="address in addresses" :value="address.id">
-                                            ({{ address.type }}) {{ address.detail }}
+                                            ({{ address.type }}) {{ address.street_name }}
                                         </option>
                                     </select>
                                     <button class="btn btn-success" @click="modal.toggle()">
@@ -198,19 +234,15 @@ const submitModal = () => {
                                     </button>
                                 </div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-6 form-group">
-                                    <label for="days" class="form-label">Lama Sewa</label>
-                                    <div class="input-group">
-                                        <input type="number" id="days" min="1" v-model="formData.days"
-                                            class="form-control">
-                                        <span class="input-group-text">Hari</span>
-                                    </div>
-                                </div>
-                                <div class="col-6 form-group">
-                                    <label for="payment_method" class="form-label">Total</label>
+                            <distance v-if="formData.shipping_method == 'delivery'" class="my-2" :form-data="formData"
+                                :address="address" />
+                            <div class="form-group">
+                                <label for="payment_method" class="form-label">Total</label>
+                                <div class="input-group">
                                     <input id="payment_method" class="form-control" disabled :value="total" />
+                                    <span class="input-group-text" v-if="formData.delivery_fee > 0">
+                                        Ongkir: {{ number_format(formData.delivery_fee) }}
+                                    </span>
                                 </div>
                             </div>
                             <button @click="submit" :disabled="carts.length == 0"

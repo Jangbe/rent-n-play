@@ -44,6 +44,7 @@ const selectAvatar = () => {
 
 const formDataModal = ref({});
 const formSettingModal = ref({ method: 'POST', action: '' });
+const refModalAddress = ref(null);
 const openModal = (type, action, data = {}) => {
     previewAttachment.value = null;
     formDataModal.value = data;
@@ -52,6 +53,11 @@ const openModal = (type, action, data = {}) => {
     formSettingModal.value.action = action + (type == 'create' ? '' : '/' + data.id);
     if (formSettingModal.value.action.startsWith('identity')) modalIdentity.toggle();
     else modalAddress.toggle();
+    if (data.lat && data.lng) {
+        refModalAddress.value.setPlace(data);
+    } else {
+        refModalAddress.value.removeMarker();
+    }
 }
 
 const previewAttachment = ref(null);
@@ -140,7 +146,7 @@ const submit = (type) => {
 
                                     <li class="nav-item">
                                         <button class="nav-link" data-bs-toggle="tab"
-                                            data-bs-target="#profile-add-address">Tambah Alamat</button>
+                                            data-bs-target="#profile-add-address">Alamat</button>
                                     </li>
                                 </template>
 
@@ -254,17 +260,18 @@ const submit = (type) => {
                                 </div> -->
 
                                 <div class="tab-pane fade pt-3" id="profile-add-address" v-if="user.role == 'Customer'">
-                                    <button class="btn btn-sm btn-primary" @click="openModal('create', 'address')">
+                                    <button class="btn btn-sm btn-primary mb-2" @click="openModal('create', 'address')">
                                         Tambah Alamat
                                     </button>
 
-                                    <div class="card mb-2" v-for="address in addresses">
+                                    <div class="card mb-2" style="cursor: pointer;" v-for="address in addresses"
+                                        @click="openModal('edit', 'address', address)">
                                         <div class="card-body">
-                                            <p class="mb-0 mt-2">Tipe : {{ address.type }}</p>
-                                            <p class="my-0">Nama Jalan : {{ address.street_name }}</p>
-                                            <p class="my-0">Nama Kontak : {{ address.contact_name }}</p>
-                                            <p class="my-0">Nomer Kontak : {{ address.contact_phone }}</p>
-                                            <p>Alamat Lengkap : {{ address.detail }}</p>
+                                            <p class="mb-0 mt-2"><b>Tipe</b> : {{ address.type }}</p>
+                                            <p class="my-0"><b>Alamat</b> : {{ address.street_name }}</p>
+                                            <p class="my-0"><b>Nama Kontak</b> : {{ address.contact_name }}</p>
+                                            <p class="my-0"><b>Nomer Kontak</b> : {{ address.contact_phone }}</p>
+                                            <p class="mb-0"><b>Detail</b> : {{ address.detail }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -322,7 +329,7 @@ const submit = (type) => {
             </div>
         </div>
 
-        <modal-address :formData="formDataModal" @submited="submitModal" />
+        <modal-address ref="refModalAddress" :formData="formDataModal" @submited="submitModal" />
     </div>
 </template>
 

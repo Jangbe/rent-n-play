@@ -28,6 +28,7 @@
         "moment-duration-format": "^2.3.2",
         "pinia": "^2.1.7",
         "sweetalert2": "^11.10.8",
-        "vue-router": "^4.3.0"
+        "vue-router": "^4.3.0",
+        "vue3-google-map": "^0.20.0"
     }
 }

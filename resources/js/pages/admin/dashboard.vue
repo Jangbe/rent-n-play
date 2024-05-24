@@ -7,7 +7,7 @@ const data = ref({ transaction: { current: 0, last: 0 }, income: { current: 0, l
 const refetch = () => axios.get('dashboard/admin', { params: filters.value }).then(({ data: res }) => {
     for (const i in res) {
         if (['reports', 'products'].includes(i)) continue;
-        res[i].percent = percent(res[i]);
+        res[i].percent = Math.abs(percent(res[i]));
         res[i].color = res[i].current > res[i].last ? 'success' : res[i].current < res[i].last ? 'danger' : 'secondary';
         res[i].text = res[i].current > res[i].last ? 'meningkat' : res[i].current < res[i].last ? 'menurun' : 'tetap';
     }
@@ -25,8 +25,8 @@ const filter_data = {
     YEAR: 'Tahun Ini',
 }
 const percent = (data) => {
-    const diff = Math.abs(data.last - data.current);
-    return data.last == 0 ? 100 : (diff / data.last * 100).toPrecision(2);
+    const diff = data.last - data.current;
+    return data.last == 0 ? 100 : (diff / data.last * 100).toPrecision(3);
 }
 var chart = null;
 onMounted(() => {

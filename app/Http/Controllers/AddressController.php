@@ -22,8 +22,10 @@ class AddressController extends Controller
             'contact_name' => $request->get('contact_name'),
             'contact_phone' => $request->get('contact_phone'),
             'detail' => $request->get('detail'),
+            'lat' => $request->get('lat'),
+            'lng' => $request->get('lng'),
         ]);
-        return response()->json("Address berhasil di tambahkan");
+        return response()->json("Data alamat berhasil di tambahkan");
     }
 
     public function show($user_id)
@@ -35,11 +37,7 @@ class AddressController extends Controller
 
     public function update(Request $request, $id)
     {
-        $Address = Address::find($id);
-
-        if (!$Address) {
-            return response()->json("Data Address tidak ada", 404);
-        }
+        $Address = Address::findOrFail($id);
 
         $Address->update([
             'user_id' => $request->get('user_id'),
@@ -48,15 +46,17 @@ class AddressController extends Controller
             'contact_name' => $request->get('contact_name'),
             'contact_phone' => $request->get('contact_phone'),
             'detail' => $request->get('detail'),
+            'lat' => $request->get('lat'),
+            'lng' => $request->get('lng'),
         ]);
 
-        return response()->json("data Address berhasil di ubah");
+        return response()->json("Data alamat berhasil di ubah");
     }
 
     public function destroy($id)
     {
-        $Address = Address::findorFail($id);
+        $Address = Address::findOrFail($id);
         $Address->delete();
-        return response()->json('telah di hapus');
+        return response()->json('Data alamat berhasil di hapus');
     }
 }

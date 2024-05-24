@@ -231,7 +231,8 @@ export default {
                 return n;
             })
         }, 1000);
-        this.checkNavActive();
+        setTimeout(this.checkNavActive, 300);
+        
         /**
          * Easy selector helper function
          */
@@ -341,69 +342,6 @@ export default {
         })
 
         /**
-         * Initiate quill editors
-         */
-        if (select('.quill-editor-default')) {
-            new Quill('.quill-editor-default', {
-                theme: 'snow'
-            });
-        }
-
-        if (select('.quill-editor-bubble')) {
-            new Quill('.quill-editor-bubble', {
-                theme: 'bubble'
-            });
-        }
-
-        if (select('.quill-editor-full')) {
-            new Quill(".quill-editor-full", {
-                modules: {
-                    toolbar: [
-                        [{
-                            font: []
-                        }, {
-                            size: []
-                        }],
-                        ["bold", "italic", "underline", "strike"],
-                        [{
-                            color: []
-                        },
-                        {
-                            background: []
-                        }
-                        ],
-                        [{
-                            script: "super"
-                        },
-                        {
-                            script: "sub"
-                        }
-                        ],
-                        [{
-                            list: "ordered"
-                        },
-                        {
-                            list: "bullet"
-                        },
-                        {
-                            indent: "-1"
-                        },
-                        {
-                            indent: "+1"
-                        }
-                        ],
-                        ["direction", {
-                            align: []
-                        }],
-                        ["link", "image", "video"],
-                        ["clean"]
-                    ]
-                },
-                theme: "snow"
-            });
-        }
-
-        /**
          * Initiate Bootstrap validation check
          */
         var needsValidation = document.querySelectorAll('.needs-validation')
@@ -420,19 +358,6 @@ export default {
                 }, false)
             })
 
-        /**
-         * Autoresize echart charts
-         */
-        // const mainContainer = select('#main');
-        // if (mainContainer) {
-        //     setTimeout(() => {
-        //         new ResizeObserver(function () {
-        //             select('.echart', true).forEach(getEchart => {
-        //                 echarts.getInstanceByDom(getEchart).resize();
-        //             })
-        //         }).observe(mainContainer);
-        //     }, 200);
-        // }
     }
 }
 </script>

@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { number_format } from "../../../helpers";
 import { Toast } from "../../../plugins/swal";
+import { useCoorStore } from "../../../stores/coor";
 
 const route = useRoute();
 const transaction = ref({ total: 0, transaction_details: [] });
@@ -61,6 +62,7 @@ const paymentCheckStatus = () => {
         });
     else Toast.fire({ title: "Maaf tidak bisa cek status", icon: "error" });
 };
+const center = useCoorStore()
 </script>
 
 <template>
@@ -107,12 +109,14 @@ const paymentCheckStatus = () => {
                 <div class="col-md-6 col-12 order-md-1">
                     <div class="card bg-white mb-2">
                         <div class="card-body">
-                            <h5 class="card-title mb-0 pb-2">
-                                <b>No Transaksi :</b>
-                                {{ transaction.transaction_number }}
-                                <span :class="`badge bg-${resolveStatus(transaction.status)} text-white`">{{
-                                    transaction.status }}</span>
-                            </h5>
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h5 class="card-title mb-0 pb-2">
+                                    <b>No Transaksi :</b>
+                                    {{ transaction.transaction_number }}
+                                </h5>
+                                <span :class="`badge bg-${resolveStatus(transaction.status)} text-white`">
+                                    {{ transaction.status }}</span>
+                            </div>
                             <div v-if="transaction.status == 'ongoing'"
                                 style="border: 1px solid black; padding: 15px; margin-bottom: 10px; border-radius: 7px;">
                                 <h4 class="text-center">Sisa Waktu</h4>
@@ -138,48 +142,60 @@ const paymentCheckStatus = () => {
                                     </div>
                                 </vue-countdown>
                             </div>
-                            <p class="card-text mb-0">
-                                <b>Metode Pembayaran :</b>
-                                {{ transaction.payment_method }}
-                            </p>
-                            <p class="card-text mb-0">
-                                <b>Durasi Sewa :</b>
-                                {{ transaction.days }} hari
-                            </p>
-                            <p class="card-text mb-0">
-                                <b>Diantar :</b>
-                                {{ transaction.delivery ? 'Ya' : 'Tidak' }}
-                            </p>
-                            <p class="card-text mb-0" v-if="transaction.delivery">
-                                <b>Alamat :</b>
-                                <br />
+
                             <table>
                                 <tr>
-                                    <td style="width: 150px;">Jalan</td>
-                                    <td>{{ transaction.address.street_name }}</td>
+                                    <td style="width: 170px;"><b>Metode Pembayaran</b></td>
+                                    <td>:</td>
+                                    <td>{{ transaction.payment_method }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Nama Kontak</td>
-                                    <td>{{ transaction.address.contact_name }}</td>
+                                    <td><b>Durasi Sewa</b></td>
+                                    <td>:</td>
+                                    <td>{{ transaction.days }} hari</td>
                                 </tr>
                                 <tr>
-                                    <td>Nomor Kontak</td>
-                                    <td>{{ transaction.address.contact_phone }}</td>
+                                    <td><b>Diantar</b></td>
+                                    <td>:</td>
+                                    <td>{{ transaction.delivery ? 'Ya' : 'Tidak' }}</td>
+                                </tr>
+                                <template v-if="transaction.delivery == 1">
+                                    <tr>
+                                        <td>Alamat</td>
+                                        <td>:</td>
+                                        <td>
+                                            ({{ transaction.address?.type }}) {{ transaction.address?.street_name }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nama Kontak</td>
+                                        <td>:</td>
+                                        <td>{{ transaction.address?.contact_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nomor Kontak</td>
+                                        <td>:</td>
+                                        <td>{{ transaction.address?.contact_phone }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Detail</td>
+                                        <td>:</td>
+                                        <td>{{ transaction.address?.detail }}</td>
+                                    </tr>
+                                </template>
+                                <tr>
+                                    <td><b>Biaya Ongkir</b></td>
+                                    <td>:</td>
+                                    <td>{{ number_format(transaction.delivery_fee) }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Alamat</td>
-                                    <td>({{ transaction.address.type }}) {{ transaction.address.detail }}</td>
+                                    <td><b>Total Pembayaran</b></td>
+                                    <td>:</td>
+                                    <td>{{ number_format(transaction.total) }}</td>
                                 </tr>
                             </table>
-                            </p>
-                            <p class="card-text mb-0" v-if="transaction.delivery">
-                                <b>Biaya Ongkir :</b>
-                                {{ number_format(transaction.delivery_fee) }}
-                            </p>
-                            <p class="card-text mb-0">
-                                <b>Total Pembayaran :</b>
-                                {{ number_format(transaction.total) }}
-                            </p>
+                            <a :href="`https://www.google.com/maps/search/?api=1&query=${center.lat}%2C${center.lng}`"
+                                target="_blank" class="btn btn-success w-100 mt-2">Cek Lokasi</a>
                             <button class="btn btn-info w-100 mt-2"
                                 v-if="transaction.payment_method == 'Transfer' && transaction.status == 'pending'"
                                 @click="paymentCheckStatus">Bayar</button>
