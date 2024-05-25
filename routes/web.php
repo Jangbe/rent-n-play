@@ -42,5 +42,5 @@ Route::get('auth/{provider}/callback', function ($provider) {
     return view('social-account', compact('token'));
 });
 
-Route::redirect('/', 'home');
+Route::redirect('/', 'home')->name('login');
 Route::view('{any}', 'app')->where('any', '^.*');

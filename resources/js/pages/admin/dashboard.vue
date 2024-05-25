@@ -272,7 +272,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody>
                                     <tr v-for="p in data.products ?? []">
-                                        <th scope="row"><a href="#"><img :src="'/storage/' + p.picture" alt=""></a></th>
+                                        <th scope="row"><a href="#"><img :src="p.picture" alt=""></a></th>
                                         <td><a href="#" class="text-primary fw-bold">{{ p.name }}</a></td>
                                         <td>{{ number_format(p.price) }}</td>
                                         <td class="fw-bold">{{ p.sold }}</td>

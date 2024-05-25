@@ -150,13 +150,13 @@ const addToCart = (product) => {
                         <div v-for="product in products"
                             :class="['col-lg-4 col-md-6 product-item', 'id-' + product.category_id]">
                             <div class="product-wrap">
-                                <img :src="'/storage/' + product.picture" class="img-fluid" alt="">
+                                <img :src="product.picture" class="img-fluid" alt="">
                                 <div class="product-info">
                                     <h4>{{ product.name }}</h4>
                                     <p>{{ number_format(product.price) }}</p>
                                     <p>{{ product.category.name }}</p>
                                     <div class="product-links">
-                                        <a :href="'/storage/' + product.picture" data-gallery="productGallery"
+                                        <a :href="product.picture" data-gallery="productGallery"
                                             class="product-lightbox" :title="product.description"><i
                                                 class="bi bi-info"></i></a>
                                         <router-link :to="'/product/' + product.id" title="Lihat Detail">

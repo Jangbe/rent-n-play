@@ -6,16 +6,16 @@ import { useRouter } from 'vue-router';
 import { number_format } from '../../helpers';
 import modalAddress from '../../components/modal-address.vue';
 import distance from '../../components/distance.vue';
+import LongText from '../../components/long-text.vue';
 
 const user = useUserStore();
 
-const carts = ref([]);
-axios.get('product').then(({ data }) => {
-    carts.value = JSON.parse(localStorage.getItem('carts') ?? '[]')
-        .map(c => {
-            const product = data.find(d => d.id == c.product_id);
-            return { ...c, product, total: c.quantity * product.price };
-        });
+const carts = ref(JSON.parse(localStorage.getItem('carts') ?? '[]'));
+axios.post('carts', { id: carts.value.map(c => c.product_id) }).then(({ data }) => {
+    carts.value = carts.value.map(c => {
+        const product = data.find(d => d.id == c.product_id);
+        return { ...c, product, total: c.quantity * product.price };
+    });
 })
 
 const changeQuantity = async (type, cart) => {
@@ -83,9 +83,6 @@ const submit = () => {
                 onPending: function (result) {
                     axios.post(`transaction/${result.order_id.split('-')[1]}/midtrans-callback`, result);
                 },
-                onError: function (result) {
-                    console.log(result);
-                },
             })
     }).catch(({ response }) => {
         Toast.fire({ title: response?.data?.message, icon: 'error' });
@@ -124,11 +121,13 @@ watch(() => formData.value.address_id, (id) => {
             <div class="row">
                 <div class="col-md-6 col-12">
                     <div class="card flex-row align-items-center mb-2" v-for="cart in carts">
-                        <img :src="'/storage/' + cart.product.picture" :alt="cart.product.picture" class="card-img-left"
+                        <img :src="cart.product.picture" :alt="cart.product.picture" class="card-img-left"
                             style="max-width: 30px; max-width: 100px;">
                         <div class="card-body pb-2">
                             <h5 class="card-title pb-0 pt-2 mb-0">{{ cart.product.name }}</h5>
-                            <p class="card-text mb-0">{{ cart.product.description }}</p>
+                            <p class="card-text mb-0">
+                                <LongText :text="cart.product.description" :length="35" />
+                            </p>
                             <div class="row justify-content-between align-items-end">
                                 <div class="col-md-8 col-12">
                                     <p class="card-text">
@@ -157,7 +156,8 @@ watch(() => formData.value.address_id, (id) => {
                         </div>
                     </div>
                     <div class="alert alert-info text-center py-2">
-                        <h3 class="my-0 py-0">Subtotal : {{ number_format(carts.reduce((a, b) => a + b.total, 0)) }}</h3>
+                        <h3 class="my-0 py-0">Subtotal : {{ number_format(carts.reduce((a, b) => a + b.total, 0)) }}
+                        </h3>
                     </div>
                     <div class="alert alert-warning" v-if="carts.length == 0">
                         Belum ada barang di keranjang, silahkan pilih terlebih dahulu!...

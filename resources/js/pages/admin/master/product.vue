@@ -1,12 +1,25 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { Confirm, Toast } from '../../../plugins/swal';
+import { number_format } from '../../../helpers';
+import LongText from '../../../components/long-text.vue';
 
-const products = ref([]);
+const refDataTable = ref(null);
 const categories = ref([]);
+const columns = [
+    { data: 'no', orderable: false, sortable: false, searchable: false },
+    { data: 'picture', orderable: false, sortable: false, searchable: false },
+    { data: 'category.name', orderable: false, sortable: true, searchable: true },
+    { data: 'name', orderable: false, sortable: true, searchable: true },
+    { data: 'description', orderable: false, sortable: false, searchable: true },
+    { data: 'price', orderable: false, sortable: true, searchable: true },
+    { data: 'amount', orderable: false, sortable: true, searchable: true },
+    { data: 'action', orderable: false, sortable: false, searchable: false },
+];
+const ajax = { url: '/api/product', headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') } };
 const fetchData = () => {
     axios.get('category').then(({ data }) => categories.value = data)
-    axios.get('product').then(({ data }) => products.value = data)
+    if (refDataTable.value) refDataTable.value.dt.draw();
 }
 fetchData();
 
@@ -77,8 +90,8 @@ const deleteRow = (row) => {
                             </button>
                         </div>
                     </h5>
-                    <DataTable class="table table-hover table-striped" :data="products"
-                        :columns="['no', 'picture', 'category.name', 'name', 'description', 'price', 'amount', 'action'].map(c => ({ data: c }))">
+                    <DataTable class="table table-hover table-striped" :options="{ processing: true, serverSide: true }"
+                        :ajax="ajax" :columns="columns" ref="refDataTable">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -95,7 +108,13 @@ const deleteRow = (row) => {
                             {{ rowIndex + 1 }}
                         </template>
                         <template #column-1="{ rowData }">
-                            <img style="max-height: 100px; max-width: 100px;" :src="'/storage/' + rowData.picture">
+                            <img style="max-height: 100px; max-width: 100px;" :src="rowData.picture">
+                        </template>
+                        <template #column-4="{ rowData }">
+                            <LongText :text="rowData.description" :length="50" />
+                        </template>
+                        <template #column-5="{ rowData }">
+                            <span>{{ number_format(rowData.price) }}</span>
                         </template>
                         <template #column-7="{ rowData }">
                             <button @click="openModal('edit', rowData)" class="btn btn-sm btn-warning">

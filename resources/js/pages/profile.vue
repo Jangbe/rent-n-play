@@ -138,7 +138,7 @@ const submit = (type) => {
                                         data-bs-target="#profile-change-password">Ubah Katasandi</button>
                                 </li>
 
-                                <template v-if="user.role == 'Customer'">
+                                <template v-if="user?.role == 'Customer'">
                                     <!-- <li class="nav-item">
                                         <button class="nav-link" data-bs-toggle="tab"
                                             data-bs-target="#profile-add-identity">Tambah Identitas / Jaminan</button>

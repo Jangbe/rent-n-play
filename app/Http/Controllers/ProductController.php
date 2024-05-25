@@ -5,13 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category')->get();
-        return response()->json($products);
+        $products = Product::query()->with('category');
+        if (request()->filled('category')) {
+            $products->whereHas('category', fn ($q) => $q->where('id', request('category')));
+        }
+        return DataTables::of($products)->toJson();
+    }
+
+    public function carts(Request $request)
+    {
+        return response()->json(Product::with('category')->whereIn('id', $request->id)->get());
     }
 
     public function store(Request $request)
@@ -40,8 +49,8 @@ class ProductController extends Controller
         ];
 
         if ($request->hasFile('picture')) {
-            if (Storage::exists($product->picture)) {
-                Storage::delete($product->picture);
+            if (Storage::exists($product->getRawOriginal('picture'))) {
+                Storage::delete($product->getRawOriginal('picture'));
             }
             $data['picture'] = $request->file('picture')->store('pictures');
         }
@@ -54,8 +63,8 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findorFail($id);
-        if (Storage::exists($product->picture)) {
-            Storage::delete($product->picture);
+        if (Storage::exists($product->getRawOriginal('picture'))) {
+            Storage::delete($product->getRawOriginal('picture'));
         }
         $product->delete();
         return response()->json('telah di hapus');

@@ -14,7 +14,8 @@ class AvatarCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        if (str($value)->startsWith("avatars/")) return url("/storage/" . $value);
+        if (str($value)->startsWith(["avatars/", "identities/", "pictures/"]))
+            return url("/storage/" . $value);
         if (is_null($value)) return url('/default.jpg');
         return $value;
     }

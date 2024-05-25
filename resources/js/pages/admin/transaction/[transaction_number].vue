@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { number_format } from "../../../helpers";
 import { Toast } from "../../../plugins/swal";
 import { useCoorStore } from "../../../stores/coor";
+import LongText from "../../../components/long-text.vue";
 
 const route = useRoute();
 const transaction = ref({ total: 0, transaction_details: [] });
@@ -89,11 +90,13 @@ const center = useCoorStore();
                 <div class="col-md-6 col-12 order-md-2">
                     <div class="card bg-white flex-row align-items-center mb-2"
                         v-for="cart in transaction.transaction_details">
-                        <img :src="'/storage/' + cart.product.picture" :alt="cart.product.picture" class="card-img-left"
+                        <img :src="cart.product.picture" :alt="cart.product.picture" class="card-img-left"
                             style="max-width: 30px; max-width: 100px;" />
                         <div class="card-body pb-2">
                             <h5 class="card-title pb-0 pt-2 mb-0">{{ cart.product.name }}</h5>
-                            <p class="card-text mb-0">{{ cart.product.description }}</p>
+                            <p class="card-text mb-0">
+                                <long-text :text="cart.product.description" :length="35" />
+                            </p>
                             <p class="card-text">
                                 <span class="text-muted">
                                     {{ number_format(cart.product.price) }} x {{ cart.quantity }}

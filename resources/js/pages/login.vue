@@ -10,45 +10,41 @@ import { ref } from 'vue';
 import { Toast } from '../plugins/swal';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '../stores/user';
+import { useOnlineStore } from '../stores/online';
 
 const user = useUserStore();
+const online = useOnlineStore();
 const route = useRoute();
 const router = useRouter();
 const formData = ref({});
 
 const submit = () => {
-    axios.post('auth/login', formData.value).then(async ({ data }) => {
-        localStorage.setItem('accessToken', data.access_token);
-        window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
-        await user.getUser();
-        if (route.query.to)
-            router.replace(route.query.to)
-        else if (user.user.role == 'Admin')
-            router.replace('/admin/dashboard');
-        else
-            router.replace('/customer/home');
-    }).catch(({ response }) => {
-        if (response?.data) {
-            Toast.fire({ title: response.data.message, icon: 'error' });
-        }
-    })
+    axios.post('auth/login', formData.value)
+        .then(({ data }) => loggedIn(data.access_token))
+        .catch(({ response }) => {
+            if (response?.data) {
+                Toast.fire({ title: response.data.message, icon: 'error' });
+            }
+        })
 }
-
+const loggedIn = async (token) => {
+    localStorage.setItem('accessToken', token);
+    window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    window.Echo.options.auth.headers.Authorization = `Bearer ${token}`;
+    await user.getUser();
+    online.join();
+    if (route.query.to)
+        router.replace(route.query.to)
+    else if (user.user.role == 'Admin')
+        router.replace('/admin/dashboard');
+    else
+        router.replace('/customer/home');
+}
 const oAuth = (provider) => {
     const authWindow = window.open('/auth/google', '_blank', 'width=600&height=400');
 
-    window.addEventListener('message', async function (event) {
-        if (event.source == authWindow) {
-            localStorage.setItem('accessToken', event.data);
-            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + event.data;
-            await user.getUser();
-            if (route.query.to)
-                router.replace(route.query.to)
-            else if (user.user.role == 'Admin')
-                router.replace('/admin/dashboard');
-            else
-                router.replace('/customer/home');
-        }
+    window.addEventListener('message', function (event) {
+        if (event.source == authWindow) loggedIn(event.data);
     })
 }
 </script>

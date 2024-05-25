@@ -28,17 +28,26 @@
             </div><!-- End Logo -->
 
             <div class="search-bar">
-                <form class="search-form d-flex align-items-center" method="POST" action="#">
-                    <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+                <form class="search-form d-flex align-items-center" method="GET" action="">
+                    <input type="text" name="query" placeholder="Search" v-model="formData.search"
+                        title="Enter search keyword">
                     <button type="submit" title="Search"><i class="bi bi-search"></i></button>
                 </form>
+            </div><!-- End Search Bar -->
+
+            <div class="category" v-if="$route.path == '/customer/home'">
+                <select name="category" id="category" class="form-select bg-white" v-model="formData.category"
+                    style="border-radius: 3px;">
+                    <option value="">Pilih Kategori</option>
+                    <option v-for="(c) in categories" :value="c.id">{{ c.name }}</option>
+                </select>
             </div><!-- End Search Bar -->
 
             <nav class="header-nav ms-auto">
                 <ul class="d-flex align-items-center">
 
                     <li class="nav-item d-block d-lg-none">
-                        <a class="nav-link nav-icon search-bar-toggle " href="#">
+                        <a class="nav-link nav-icon search-bar-toggle">
                             <i class="bi bi-search"></i>
                         </a>
                     </li><!-- End Search Icon-->
@@ -163,16 +172,31 @@ import navAdmin from '../components/nav-admin.vue';
 import navCustomer from '../components/nav-customer.vue';
 
 export default {
-    data: () => ({ user: useUserStore(), interval: null, sound: new Audio('/notification.mp3') }),
+    data: () => ({
+        user: useUserStore(),
+        interval: null, sound: new Audio('/notification.mp3'),
+        categories: [],
+        formData: { search: '', category: '' }
+    }),
     components: { navAdmin, navCustomer },
     watch: {
         '$route.path': function () { setTimeout(this.checkNavActive, 100) },
+        '$route.query': function (query) {
+            this.formData.category = query.category ?? '';
+            this.formData.search = query.search ?? '';
+        },
         'user.user': function (user) {
-            Echo.private('App.Models.User.' + user.id)
-                .notification((notification) => {
-                    this.sound.play();
-                    this.user.user.notifications.unshift(notification);
-                })
+            if (user)
+                Echo.private('App.Models.User.' + user.id)
+                    .notification((notification) => {
+                        this.sound.play();
+                        this.user.user.notifications.unshift(notification);
+                    })
+        },
+        'formData': {
+            handler: function (val) {
+                this.$router.replace({ query: val })
+            }, deep: true
         }
     },
     computed: {
@@ -182,6 +206,8 @@ export default {
     },
     methods: {
         checkNavActive: function () {
+            const body = document.querySelector('body');
+            if (body.classList.contains('toggle-sidebar')) body.classList.remove('toggle-sidebar');
             document.querySelectorAll('.sidebar-nav a').forEach(node => {
                 node.classList.add('collapsed');
                 if (node.classList.contains('active')) {
@@ -195,7 +221,9 @@ export default {
                     Toast.fire({ title: response.data.message, icon: 'error' });
                 }
             }).finally(() => {
+                Echo.leave('online');
                 localStorage.removeItem('accessToken');
+                this.user.user = null;
                 window.axios.defaults.headers.common['Authorization'] = null;
                 this.$router.replace('/home');
             })
@@ -232,7 +260,11 @@ export default {
             })
         }, 1000);
         setTimeout(this.checkNavActive, 300);
-        
+
+        axios.get('category').then(({ data }) => {
+            this.categories = data;
+        })
+
         /**
          * Easy selector helper function
          */

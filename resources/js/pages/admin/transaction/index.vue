@@ -49,7 +49,7 @@ Echo.channel('order-status-updated')
         <section class="section checkout row">
             <h2 class="text-muted">Riwayat Transaksi</h2>
             <div class="col-md-6 col-12" v-for="transaction in transactions">
-                <div class="card mb-2" style="cursor: pointer;"
+                <div class="card bg-white mb-2" style="cursor: pointer;"
                     @click="router.push('transaction/' + transaction.transaction_number)">
                     <div class="card-body">
                         <h5 class="card-title mb-0 pb-2">

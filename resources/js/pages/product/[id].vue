@@ -35,7 +35,7 @@ const addToCart = () => {
                             <div class="swiper-wrapper align-items-center">
 
                                 <div class="swiper-slide">
-                                    <img :src="'/storage/' + product.picture" alt="">
+                                    <img :src="product.picture" alt="">
                                 </div>
 
                             </div>

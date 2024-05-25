@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AvatarCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,7 @@ class Product extends Model
     protected $fillable = ['category_id', 'name', 'description', 'amount', 'price', 'picture'];
 
     public $appends = ['availableStock'];
+    public $casts = ['picture' => AvatarCast::class];
 
     public function category()
     {
