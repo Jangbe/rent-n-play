@@ -15,16 +15,17 @@ class AddressController extends Controller
 
     public function store(Request $request)
     {
-        Address::create([
-            'user_id' => $request->get('user_id', $request->user()->id),
-            'type' => $request->get('type'),
-            'street_name' => $request->get('street_name'),
-            'contact_name' => $request->get('contact_name'),
-            'contact_phone' => $request->get('contact_phone'),
-            'detail' => $request->get('detail'),
-            'lat' => $request->get('lat'),
-            'lng' => $request->get('lng'),
+        $validate = $request->validate([
+            'type' => 'required',
+            'street_name' => 'required',
+            'contact_name' => 'required',
+            'contact_phone' => 'required',
+            'detail' => 'required',
+            'lat' => 'required',
+            'lng' => 'required',
         ]);
+        $validate['user_id'] = $request->user()->id;
+        Address::create($validate);
         return response()->json("Data alamat berhasil di tambahkan");
     }
 
@@ -39,16 +40,17 @@ class AddressController extends Controller
     {
         $Address = Address::findOrFail($id);
 
-        $Address->update([
-            'user_id' => $request->get('user_id'),
-            'type' => $request->get('type'),
-            'street_name' => $request->get('street_name'),
-            'contact_name' => $request->get('contact_name'),
-            'contact_phone' => $request->get('contact_phone'),
-            'detail' => $request->get('detail'),
-            'lat' => $request->get('lat'),
-            'lng' => $request->get('lng'),
+        $validate = $request->validate([
+            'type' => 'required',
+            'street_name' => 'required',
+            'contact_name' => 'required',
+            'contact_phone' => 'required',
+            'detail' => 'required',
+            'lat' => 'required',
+            'lng' => 'required',
         ]);
+        $validate['user_id'] = $request->user()->id;
+        $Address->update($validate);
 
         return response()->json("Data alamat berhasil di ubah");
     }

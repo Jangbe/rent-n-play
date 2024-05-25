@@ -6,9 +6,24 @@
 </style>
 
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { Toast } from '../plugins/swal';
 
 const router = useRouter();
+
+const formData = ref({});
+const loading = ref(false);
+const submit = () => {
+    loading.value = true;
+    axios.post('auth/forgot-password', formData.value)
+        .then(({ data }) => {
+            Toast.fire(({ title: data.message }))
+            router.push('/reset-password?email=' + formData.value.email);
+        })
+        .catch(({ response }) => { Toast.fire({ title: response?.data?.message, icon: 'error' }) })
+        .finally(() => loading.value = false);
+}
 </script>
 
 <template>
@@ -26,13 +41,17 @@ const router = useRouter();
                     <h3 class="mb-4">Lupa Katasandi</h3>
                 </div>
             </div>
-            <form action="#" class="signin-form">
+            <form action="#" @submit.prevent="submit" class="signin-form">
                 <div class="form-group mb-3">
                     <label class="label" for="name">Email</label>
-                    <input type="text" class="form-control" placeholder="Email" required>
+                    <input type="text" v-model="formData.email" class="form-control" placeholder="Email" required>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="form-control btn btn-primary submit px-3">Kirim</button>
+                    <button type="submit" class="form-control btn btn-primary submit px-3" :disabled="loading">
+                        <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                        Kirim
+                    </button>
                 </div>
             </form>
         </div>
@@ -44,4 +63,5 @@ const router = useRouter();
 <route lang="yaml">
     meta:
         layout: auth
+        redirectIfLoggedIn: true
 </route>

@@ -68,6 +68,8 @@ const changeAttachment = (e) => {
 }
 
 const submitModal = () => {
+    const index = formSettingModal.value.action.startsWith('address') ? 'address' : 'identity';
+    loading.value[index] = true;
     const data = new FormData();
     for (const i in formDataModal.value) data.append(i, formDataModal.value[i]);
     axios.post(formSettingModal.value.action, data).then(({ data }) => {
@@ -77,10 +79,12 @@ const submitModal = () => {
         Toast.fire({ title: data });
     }).catch(({ response }) => {
         Toast.fire({ title: response?.data?.message ?? 'Internal server error', icon: 'error' });
-    })
+    }).finally(() => loading.value[index] = false);
 }
 
+const loading = ref({ profile: false, password: false, address: false });
 const submit = (type) => {
+    loading.value[type] = true;
     const data = new FormData();
     for (const i in formData.value) data.append(i, formData.value[i]);
     axios.post('update-' + type, data).then(({ data }) => {
@@ -88,7 +92,7 @@ const submit = (type) => {
         userStore.getUser();
     }).catch(({ response }) => {
         Toast.fire({ title: response?.data?.message ?? 'Internal server error', icon: 'error' });
-    })
+    }).finally(() => loading.value[type] = false);
 }
 </script>
 
@@ -193,7 +197,11 @@ const submit = (type) => {
                                         </div>
 
                                         <div class="text-center">
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                            <button type="submit" class="btn btn-primary" :disabled="loading.profile">
+                                                <span v-if="loading.profile" class="spinner-border spinner-border-sm"
+                                                    role="status" aria-hidden="true"></span>
+                                                Simpan Perubahan
+                                            </button>
                                         </div>
                                     </form><!-- End Profile Edit Form -->
 
@@ -231,7 +239,11 @@ const submit = (type) => {
                                         </div>
 
                                         <div class="text-center">
-                                            <button type="submit" class="btn btn-primary">Change Password</button>
+                                            <button type="submit" class="btn btn-primary" :disabled="loading.password">
+                                                <span v-if="loading.password" class="spinner-border spinner-border-sm"
+                                                    role="status" aria-hidden="true"></span>
+                                                Ubah Katasandi
+                                            </button>
                                         </div>
                                     </form><!-- End Change Password Form -->
 
@@ -323,13 +335,18 @@ const submit = (type) => {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        <button class="btn btn-primary">Simpan</button>
+                        <button class="btn btn-primary" :disabled="loading.identity">
+                            <span v-if="loading.identity" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                            Simpan
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <modal-address ref="refModalAddress" :formData="formDataModal" @submited="submitModal" />
+        <modal-address ref="refModalAddress" :formData="formDataModal" @submited="submitModal"
+            :loading="loading.address" />
     </div>
 </template>
 

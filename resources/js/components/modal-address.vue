@@ -5,10 +5,8 @@ import { GoogleMap, Marker } from 'vue3-google-map';
 import { useCoorStore } from '../stores/coor';
 
 const props = defineProps({
-    formData: {
-        type: Object,
-        default: {}
-    }
+    formData: { type: Object, default: {} },
+    loading: { type: Boolean, default: false }
 })
 const emit = defineEmits(['submited']);
 const env = import.meta.env;
@@ -120,7 +118,11 @@ defineExpose({ setPlace, removeMarker });
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button class="btn btn-primary">Simpan</button>
+                    <button class="btn btn-primary" :disabled="loading">
+                        <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                        Simpan
+                    </button>
                 </div>
             </form>
         </div>

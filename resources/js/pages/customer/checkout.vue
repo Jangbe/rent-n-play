@@ -27,7 +27,7 @@ const changeQuantity = async (type, cart) => {
         if (isConfirmed) carts.value.splice(carts.value.indexOf(cart), 1);
         else return
     }
-    if (type == '+' && cart.quantity == cart.product.amount) {
+    if (type == '+' && cart.quantity == cart.product.availableStock) {
         Toast.fire({ title: 'Mencapai batas maks', icon: 'warning' });
         return;
     }
@@ -37,7 +37,7 @@ const changeQuantity = async (type, cart) => {
 }
 const setCart = () => {
     localStorage.setItem('carts', JSON.stringify(carts.value.map(c => {
-        if (c.quantity > c.product.amount) c.quantity = c.product.amount;
+        if (c.quantity > c.product.availableStock) c.quantity = c.product.availableStock;
         return { ...c, total: c.quantity * c.product.price };
     })));
 }
@@ -63,7 +63,9 @@ watch(() => formData.value.shipping_method, (type) => {
     if (type != 'delivery') formData.value.delivery_fee = 0;
 })
 const router = useRouter();
+const loading = ref({ checkout: false, address: false });
 const submit = () => {
+    loading.value.checkout = true;
     const data = {};
     for (let i in formData.value) {
         data[i] = formData.value[i];
@@ -86,18 +88,19 @@ const submit = () => {
             })
     }).catch(({ response }) => {
         Toast.fire({ title: response?.data?.message, icon: 'error' });
-    })
+    }).finally(() => loading.value.checkout = false);
 }
 var modal = null;
 onMounted(() => {
     modal = new bootstrap.Modal(document.querySelector('#modal-address'));
 })
 const submitModal = () => {
+    loading.value.address = true;
     axios.post('address', formDataModal.value).then(({ data }) => {
         Toast.fire({ title: data });
         getAddresses();
         modal.toggle();
-    })
+    }).finally(() => loading.value.address = false);
 }
 watch(() => formData.value.address_id, (id) => {
     address.value = addresses.value.find(a => a.id == id);
@@ -121,17 +124,18 @@ watch(() => formData.value.address_id, (id) => {
             <div class="row">
                 <div class="col-md-6 col-12">
                     <div class="card flex-row align-items-center mb-2" v-for="cart in carts">
-                        <img :src="cart.product.picture" :alt="cart.product.picture" class="card-img-left"
+                        <img :src="cart?.product?.picture" :alt="cart?.product?.picture" class="card-img-left"
                             style="max-width: 30px; max-width: 100px;">
                         <div class="card-body pb-2">
-                            <h5 class="card-title pb-0 pt-2 mb-0">{{ cart.product.name }}</h5>
+                            <h5 class="card-title pb-0 pt-2 mb-0">{{ cart?.product?.name }}</h5>
                             <p class="card-text mb-0">
-                                <LongText :text="cart.product.description" :length="35" />
+                                <LongText :text="cart?.product?.description ?? ''" :length="35" />
                             </p>
                             <div class="row justify-content-between align-items-end">
                                 <div class="col-md-8 col-12">
                                     <p class="card-text">
-                                        <span class="text-muted">{{ number_format(cart.product.price) }}</span> <br>
+                                        <span class="text-muted">{{ number_format(cart?.product?.price ?? 0) }}</span>
+                                        <br>
                                         <span class="fw-bold">Total :
                                             {{ number_format(cart.total) }}
                                         </span>
@@ -144,7 +148,7 @@ watch(() => formData.value.address_id, (id) => {
                                             <i class="bx bx-minus"></i>
                                         </button>
                                         <input type="number" style="max-width: 40px;" v-model="cart.quantity" min="0"
-                                            :max="cart.product.amount" class="form-control form-control-sm"
+                                            :max="cart?.product?.availableStock" class="form-control form-control-sm"
                                             @update:model-value="setCart">
                                         <button class="btn btn-sm btn-secondary"
                                             @click.prevent="changeQuantity('+', cart)">
@@ -196,18 +200,6 @@ watch(() => formData.value.address_id, (id) => {
                                             <option value="pick-up">Diambil</option>
                                             <option value="delivery">Diantar</option>
                                         </select>
-                                        <!-- <div class="form-control text-center">
-                                            <div class="form-check form-check-inline">
-                                                <label for="delivery" class="form-check-label">Diantar</label>
-                                                <input type="radio" name="type" value="delivery" v-model="formData.shipping_method"
-                                                    id="delivery" class="form-check-input">
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <label for="take" class="form-check-label">Diambil</label>
-                                                <input type="radio" name="type" value="take" v-model="formData.shipping_method" id="take"
-                                                    class="form-check-input">
-                                            </div>
-                                        </div> -->
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -245,15 +237,19 @@ watch(() => formData.value.address_id, (id) => {
                                     </span>
                                 </div>
                             </div>
-                            <button @click="submit" :disabled="carts.length == 0"
-                                class="btn btn-success w-100 mt-3">Sewa</button>
+                            <button @click="submit" :disabled="carts.length == 0 || loading.checkout"
+                                class="btn btn-success w-100 mt-3">
+                                <span v-if="loading.checkout" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                Sewa
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <modal-address :formData="formDataModal" @submited="submitModal" />
+        <modal-address :formData="formDataModal" @submited="submitModal" :loading="loading.address" />
     </div>
 </template>
 

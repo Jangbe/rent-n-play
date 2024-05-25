@@ -15,6 +15,7 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate(['name' => 'required']);
         Category::create([
             'name' => $request->get('name')
         ]);
@@ -25,6 +26,7 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
+        $request->validate(['name' => 'required']);
         $category->update([
             'name' => $request->get('name')
         ]);

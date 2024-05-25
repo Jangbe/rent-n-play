@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\DashboardEvent;
 use App\Http\Controllers\Controller;
 use App\Mail\OtpMail;
 use App\Models\User;
@@ -27,6 +28,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
+        broadcast(new DashboardEvent());
 
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
@@ -40,7 +42,7 @@ class AuthController extends Controller
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                'message' => 'Unauthorized'
+                'message' => 'Email atau katasandi salah'
             ], 401);
         }
         $user = User::where('email', $request->email)->firstOrFail();
@@ -68,16 +70,18 @@ class AuthController extends Controller
             'email' => 'required|email'
         ]);
 
+        if (!User::where('email', $request->email)->first()) return response()->json(['message' => 'User email tidak terdaftar'], 404);
         $email = $request->input("email");
         $otp = rand(100000, 999999); // Generate a 6-digit OTP
         // Send OTP by email
-        Mail::to($email)->send(new OtpMail($otp));
+        Mail::to($email)->send(new OtpMail($otp, $request->email));
+        DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
         DB::table('password_reset_tokens')->insert([
             'email' => $email,
             'token' => bcrypt($otp),
             'created_at' => now()
         ]);
-        return response()->json(["message" => "OTP sent successfully"]);
+        return response()->json(["message" => "Kode OTP berhasil dikirim"]);
     }
 
     public function resetPassword(Request $request)
@@ -98,7 +102,7 @@ class AuthController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Password reset successfully'], 200)
-            : response()->json(['message' => 'Unable to reset password'], 400);
+            ? response()->json(['message' => 'Katasandi berhasil direset'], 200)
+            : response()->json(['message' => 'Gagal untuk mereset katasandi'], 400);
     }
 }

@@ -38,7 +38,9 @@ const openModal = (type, data = {}) => {
 const setPicture = (data) => {
     formData.value.picture = data.target.files[0];
 }
+const loading = ref(false);
 const submit = () => {
+    loading.value = true;
     const data = new FormData();
     for (const i in formData.value) {
         data.append(i, formData.value[i]);
@@ -50,6 +52,8 @@ const submit = () => {
             fetchData();
             Toast.fire({ title: data });
         })
+        .catch(({ response }) => { Toast.fire({ title: response?.data?.message, icon: 'error' }) })
+        .finally(() => loading.value = false);
 }
 const deleteRow = (row) => {
     Confirm.fire({ icon: 'warning' }).then(({ isConfirmed }) => {
@@ -178,7 +182,11 @@ const deleteRow = (row) => {
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                            <button class="btn btn-primary">Simpan</button>
+                            <button class="btn btn-primary" :disabled="loading">
+                                <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                Simpan
+                            </button>
                         </div>
                     </div>
                 </form>

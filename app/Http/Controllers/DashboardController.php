@@ -66,7 +66,7 @@ class DashboardController extends Controller
         ];
         $categories = [];
         foreach ($period as $p) {
-            $p->timezone('-07:00');
+            $p->timezone('-06:00');
             $t = $transaction->where('date', $p->format($format[1]))->first();
             if ($t) $series[0]['data'][] = $t->total;
             else $series[0]['data'][] = 0;
@@ -79,7 +79,7 @@ class DashboardController extends Controller
             if ($c) $series[2]['data'][] = $c->total;
             else $series[2]['data'][] = 0;
 
-            $categories[] = $p->timezone('UTC')->format('Y-m-d\TH:00:00.000000\Z');
+            $categories[] = $p->timezone('UTC')->format('Y-m-d\TH:00:00.000000-01:00');
         }
 
         return compact('series', 'categories');

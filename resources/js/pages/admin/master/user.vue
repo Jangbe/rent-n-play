@@ -2,7 +2,9 @@
 import { ref, onMounted, watch } from 'vue';
 import { useOnlineStore } from '../../../stores/online';
 import { number_format } from '../../../helpers';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const users = ref([]);
 const fetchData = () => axios.get('master/user').then(({ data }) => {
     users.value = data;
@@ -31,6 +33,10 @@ const resolveStatus = (status) => {
         case 'completed':
             return 'primary';
     }
+}
+const showTransaction = (transaction_number) => {
+    modal.value.toggle();
+    router.push('/admin/transaction/' + transaction_number);
 }
 </script>
 
@@ -121,7 +127,7 @@ const resolveStatus = (status) => {
                                     <h4>Riwayat Transaksi</h4>
                                     <div class="card bg-white mb-2" style="cursor: pointer;"
                                         v-for="transaction in user.transactions ?? []"
-                                        @click="router.push('transaction/' + transaction.transaction_number)">
+                                        @click="showTransaction(transaction.transaction_number)">
                                         <div class="card-body">
                                             <h5 class="card-title mb-0 pb-2">
                                                 <b>No Transaksi : </b> {{ transaction.transaction_number }}
@@ -137,7 +143,7 @@ const resolveStatus = (status) => {
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="alert alert-warning text-center" v-if="user.transactions.length == 0">
+                                    <div class="alert alert-warning text-center" v-if="user.transactions?.length == 0">
                                         Belum ada transaksi pada pengguna ini.
                                     </div>
                                 </div>

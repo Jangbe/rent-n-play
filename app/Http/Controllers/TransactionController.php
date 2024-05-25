@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DashboardEvent;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Notifications\InvoicePaid;
@@ -112,6 +113,7 @@ class TransactionController extends Controller
                 return null;
             }
         });
+        broadcast(new DashboardEvent());
 
         return response()->json([
             'message' => 'Transaksi berhasil dibuat',
@@ -142,6 +144,7 @@ class TransactionController extends Controller
 
         $transaction->save();
         $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'address', 'transactionDetails.product'])));
+        broadcast(new DashboardEvent());
 
         return response()->json('Status transaksi berhasil diubah');
     }
@@ -152,6 +155,7 @@ class TransactionController extends Controller
         if ($response && $response->fraud_status == 'accept') {
             $transaction->update(['status' => 'paid']);
             $transaction->user->notify(new InvoicePaid($transaction->load(['user', 'address', 'transactionDetails.product'])));
+            broadcast(new DashboardEvent());
         }
     }
 

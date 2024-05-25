@@ -25,37 +25,39 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $picture = $request->file('picture')->store('pictures');
-        Product::create([
-            'category_id' => $request->get('category_id'),
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-            'price' => $request->get('price'),
-            'amount' => $request->get('amount'),
-            'picture' => $picture
+        $validate = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|max:200',
+            'description' => 'required',
+            'price' => 'required|numeric',
+            'amount' => 'required|numeric',
+            'picture' => 'required|file|image'
         ]);
+        $validate['picture'] = $request->file('picture')->store('pictures');
+        Product::create($validate);
         return response()->json("product berhasil di tambahkan");
     }
 
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $data = [
-            'category_id' => $request->get('category_id'),
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-            'price' => $request->get('price'),
-            'amount' => $request->get('amount'),
-        ];
+
+        $validate = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|max:200',
+            'description' => 'required',
+            'price' => 'required|numeric',
+            'amount' => 'required|numeric',
+        ]);
 
         if ($request->hasFile('picture')) {
             if (Storage::exists($product->getRawOriginal('picture'))) {
                 Storage::delete($product->getRawOriginal('picture'));
             }
-            $data['picture'] = $request->file('picture')->store('pictures');
+            $validate['picture'] = $request->file('picture')->store('pictures');
         }
 
-        $product->update($data);
+        $product->update($validate);
 
         return response()->json("data product berhasil di ubah");
     }

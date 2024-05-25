@@ -8,11 +8,14 @@ export const useUserStore = defineStore('user', {
         setUser(user) {
             this.user = user;
         },
-        async getUser() {
-            await axios.get('/user').then(({ data }) => {
-                this.user = data;
-            }).catch(({ response }) => {
-                // nothing happend
+        getUser() {
+            return new Promise((res, rej) => {
+                if (this.user != null) return res(this.user);
+                axios.get('/user').then(({ data }) => {
+                    this.user = data;
+                }).catch(({ response }) => {
+                    // nothing happend
+                }).finally(() => res(this.user))
             })
         }
     }

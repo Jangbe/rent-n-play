@@ -20,13 +20,17 @@ const openModal = (type, data = {}) => {
     formSetting.value.url = 'category' + (type == 'create' ? '' : '/' + data.id);
     modal.value.toggle();
 }
+const loading = ref(false);
 const submit = () => {
+    loading.value = true;
     axios.post(formSetting.value.url, { ...formData.value, _method: formSetting.value.method })
         .then(({ data }) => {
             modal.value.toggle();
             fetchData();
             Toast.fire({ title: data });
         })
+        .catch(({ response }) => Toast.fire({ title: response?.data?.message, icon: 'error' }))
+        .finally(() => loading.value = false);
 }
 const deleteRow = (row) => {
     Confirm.fire({ icon: 'warning' }).then(({ isConfirmed }) => {
@@ -108,7 +112,11 @@ const deleteRow = (row) => {
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                            <button class="btn btn-primary">Simpan</button>
+                            <button class="btn btn-primary" :disabled="loading">
+                                <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                Simpan
+                            </button>
                         </div>
                     </div>
                 </form>

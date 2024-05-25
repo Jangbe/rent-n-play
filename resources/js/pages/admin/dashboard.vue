@@ -63,19 +63,21 @@ onMounted(() => {
             type: 'datetime',
             categories: []
         },
+        yaxis: { labels: { formatter: (val) => parseInt(val) } },
         tooltip: {
             x: {
                 format: 'dd/MM/yy HH:mm'
             },
             y: [
-                {},
-                { formatter: (val) => val * 10000 },
-                {}
+                { formatter: (val) => parseInt(val) },
+                { formatter: (val) => number_format(parseInt(val * 10000)) },
+                { formatter: (val) => parseInt(val) },
             ]
         }
     });
     chart.render();
 })
+Echo.channel('dashboard').listen('DashboardEvent', refetch);
 </script>
 
 <template>
@@ -266,7 +268,7 @@ onMounted(() => {
                                         <th scope="col">Pratinjau</th>
                                         <th scope="col">Barang</th>
                                         <th scope="col">Harga</th>
-                                        <th scope="col">Ter-sewa</th>
+                                        <th scope="col" style="width: 80px;">Ter-sewa</th>
                                         <th scope="col">Pendapatan</th>
                                     </tr>
                                 </thead>
@@ -275,7 +277,7 @@ onMounted(() => {
                                         <th scope="row"><a href="#"><img :src="p.picture" alt=""></a></th>
                                         <td><a href="#" class="text-primary fw-bold">{{ p.name }}</a></td>
                                         <td>{{ number_format(p.price) }}</td>
-                                        <td class="fw-bold">{{ p.sold }}</td>
+                                        <td class="text-center fw-bold">{{ p.sold }}</td>
                                         <td>{{ number_format(p.revenue) }}</td>
                                     </tr>
                                 </tbody>

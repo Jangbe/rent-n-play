@@ -18,37 +18,43 @@ import { ref } from 'vue';
 import { Toast } from '../plugins/swal';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/user';
+import { useOnlineStore } from '../stores/online';
 
+const online = useOnlineStore();
 const user = useUserStore();
 const router = useRouter();
 const formData = ref({});
 const errors = ref({});
 
+const loggedIn = async (token) => {
+    localStorage.setItem('accessToken', token);
+    window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    window.Echo.options.auth.headers.Authorization = `Bearer ${token}`;
+    await user.getUser();
+    online.join();
+    router.replace('/customer/home');
+}
+
+const loading = ref(false);
 const submit = () => {
+    loading.value = true;
     errors.value = {};
-    axios.post('auth/register', formData.value).then(({ data }) => {
-        localStorage.setItem('accessToken', data.access_token);
-        window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
-        user.setUser(data.data);
-        router.replace('/admin/dashboard');
-    }).catch(({ response }) => {
-        if (response?.data) {
-            errors.value = response.data.errors;
-            Toast.fire({ title: response.data.message, icon: 'error' });
-        }
-    })
+    axios.post('auth/register', formData.value)
+        .then(({ data }) => loggedIn(data.access_token))
+        .catch(({ response }) => {
+            if (response?.data) {
+                errors.value = response.data.errors;
+                Toast.fire({ title: response.data.message, icon: 'error' });
+            }
+        })
+        .finally(() => loading.value = false);
 }
 
 const oAuth = (provider) => {
     const authWindow = window.open('/auth/google', '_blank', 'width=600&height=400');
 
     window.addEventListener('message', function (event) {
-        if (event.source == authWindow) {
-            localStorage.setItem('accessToken', event.data);
-            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + event.data;
-            user.getUser();
-            router.replace('/admin/dashboard');
-        }
+        if (event.source == authWindow) loggedIn(event.data);
     })
 }
 </script>
@@ -69,7 +75,8 @@ const oAuth = (provider) => {
                 </div>
                 <div class="w-100">
                     <p class="social-media d-flex justify-content-end">
-                        <a href="#" @click.prevent="oAuth('google')" class="social-icon d-flex align-items-center justify-content-center"><span
+                        <a href="#" @click.prevent="oAuth('google')"
+                            class="social-icon d-flex align-items-center justify-content-center"><span
                                 class="fa fa-google"></span></a>
                     </p>
                 </div>
@@ -100,7 +107,11 @@ const oAuth = (provider) => {
                         placeholder="Katasandi" required>
                 </div>
                 <div class="form-group mt-4">
-                    <button type="submit" class="form-control btn btn-primary submit px-3">Daftar</button>
+                    <button type="submit" class="form-control btn btn-primary submit px-3" :disabled="loading">
+                        <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                        Daftar
+                    </button>
                 </div>
             </form>
         </div>
