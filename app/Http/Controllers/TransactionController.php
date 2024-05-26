@@ -62,7 +62,7 @@ class TransactionController extends Controller
             $transaction->products()->sync($request->products);
 
             $admin = User::where('role', 'Admin')->get();
-            $transaction->load(['user', 'transactionDetails.product.category']);
+            $transaction->load(['user', 'transactionDetails.product.category', 'testimonial']);
 
             foreach ($admin as $a) {
                 $a->notify(new OrderPlaced($transaction, $admin));
@@ -124,7 +124,7 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-        $transaction = Transaction::with(['user', 'transactionDetails.product', 'address'])->where('transaction_number', $id)->firstOrFail();
+        $transaction = Transaction::with(['user', 'address', 'transactionDetails.product', 'testimonial'])->where('transaction_number', $id)->firstOrFail();
         if ($transaction->user_id != auth()->id() && auth()->user()->role != 'Admin') return abort(404);
         return response()->json($transaction);
     }
@@ -143,7 +143,7 @@ class TransactionController extends Controller
         }
 
         $transaction->save();
-        $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'address', 'transactionDetails.product'])));
+        $transaction->user->notify(new OrderStatusUpdated($transaction->load(['user', 'address', 'transactionDetails.product', 'testimonial'])));
         broadcast(new DashboardEvent());
 
         return response()->json('Status transaksi berhasil diubah');
@@ -154,7 +154,7 @@ class TransactionController extends Controller
         $response = \Midtrans\Transaction::status($request->get('order_id'));
         if ($response && $response->fraud_status == 'accept') {
             $transaction->update(['status' => 'paid']);
-            $transaction->user->notify(new InvoicePaid($transaction->load(['user', 'address', 'transactionDetails.product'])));
+            $transaction->user->notify(new InvoicePaid($transaction->load(['user', 'address', 'transactionDetails.product', 'testimonial'])));
             broadcast(new DashboardEvent());
         }
     }

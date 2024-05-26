@@ -39,4 +39,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function testimonial()
+    {
+        return $this->hasOne(Testimonial::class);
+    }
 }

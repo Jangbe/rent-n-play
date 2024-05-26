@@ -10,7 +10,6 @@
         <link href="/guest/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
         <link href="/guest/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
         <link href="/guest/vendor/remixicon/remixicon.css" rel="stylesheet">
-        <link href="/guest/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/guest/css/style.css">
 
         <!-- ======= Header ======= -->
@@ -52,7 +51,7 @@
             <div class="footer-top">
                 <div class="container">
                     <div class="row gy-4">
-                        <div class="col-lg-5 col-md-12 footer-info">
+                        <div class="col-lg-7 col-md-12 footer-info">
                             <router-link to="/home" class="logo d-flex align-items-center">
                                 <img src="/guest/img/logo.png" alt="">
                                 <span>Rent N Play</span>
@@ -68,17 +67,16 @@
                         </div>
 
                         <div class="col-lg-2 col-6 footer-links">
-                            <h4>Useful Links</h4>
+                            <h4>Tautan Berguna</h4>
                             <ul>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Home</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li>
-                                <li><i class="bi bi-chevron-right"></i> <a href="#">Privacy policy</a></li>
+                                <li><i class="bi bi-chevron-right"></i> <a class="scrollto" href="#home">Home</a></li>
+                                <li><i class="bi bi-chevron-right"></i> <a class="scrollto" href="#about">Tentang Kami</a></li>
+                                <li><i class="bi bi-chevron-right"></i> <a class="scrollto" href="#product">Produk</a></li>
+                                <li><i class="bi bi-chevron-right"></i> <router-link to="/customer/checkout">Checkout</router-link></li>
                             </ul>
                         </div>
 
-                        <div class="col-lg-2 col-6 footer-links">
+                        <!-- <div class="col-lg-2 col-6 footer-links">
                             <h4>Our Services</h4>
                             <ul>
                                 <li><i class="bi bi-chevron-right"></i> <a href="#">Web Design</a></li>
@@ -87,10 +85,10 @@
                                 <li><i class="bi bi-chevron-right"></i> <a href="#">Marketing</a></li>
                                 <li><i class="bi bi-chevron-right"></i> <a href="#">Graphic Design</a></li>
                             </ul>
-                        </div>
+                        </div> -->
 
                         <div class="col-lg-3 col-md-12 footer-checkout text-center text-md-start">
-                            <h4>Contact Us</h4>
+                            <h4>Kontak Kami</h4>
                             <p>
                                 A108 Adam Street <br>
                                 New York, NY 535022<br>
@@ -249,84 +247,7 @@ export default {
             }
         }
 
-        new Swiper('.clients-slider', {
-            speed: 400,
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false
-            },
-            slidesPerView: 'auto',
-            pagination: {
-                el: '.swiper-pagination',
-                type: 'bullets',
-                clickable: true
-            },
-            breakpoints: {
-                320: {
-                    slidesPerView: 2,
-                    spaceBetween: 40
-                },
-                480: {
-                    slidesPerView: 3,
-                    spaceBetween: 60
-                },
-                640: {
-                    slidesPerView: 4,
-                    spaceBetween: 80
-                },
-                992: {
-                    slidesPerView: 6,
-                    spaceBetween: 120
-                }
-            }
-        });
-
-        new Swiper('.product-details-slider', {
-            speed: 400,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                type: 'bullets',
-                clickable: true
-            }
-        });
-
-        new Swiper('.testimonials-slider', {
-            speed: 600,
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false
-            },
-            slidesPerView: 'auto',
-            pagination: {
-                el: '.swiper-pagination',
-                type: 'bullets',
-                clickable: true
-            },
-            breakpoints: {
-                320: {
-                    slidesPerView: 1,
-                    spaceBetween: 40
-                },
-
-                1200: {
-                    slidesPerView: 3,
-                }
-            }
-        });
-
         this.aos_init();
     }
 }
 </script>
-
-<style scoped>
-/* #header.header.fixed-top:not(.header-scrolleed)  {
-    background-color: #031c32;
-} */
-</style>

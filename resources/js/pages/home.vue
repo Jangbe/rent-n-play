@@ -3,6 +3,12 @@ import { ref, onMounted, defineEmits } from 'vue';
 import { Toast } from '../plugins/swal';
 import { useUserStore } from '../stores/user';
 import { number_format } from '../helpers';
+import { Pagination, Autoplay } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
 
 const userStore = useUserStore();
 const emit = defineEmits(['aos_init']);
@@ -52,6 +58,29 @@ const addToCart = (product) => {
     }
     localStorage.setItem('carts', JSON.stringify(carts));
 }
+const testimonials = ref([]);
+const swiperTestimonial = {
+    modules: [Pagination, Autoplay],
+    speed: 600,
+    loop: true,
+    autoplay: { delay: 5000, disableOnInteraction: false },
+    slidesPerView: 'auto',
+    pagination: { type: 'bullets', clickable: true },
+    breakpoints: {
+        320: { slidesPerView: 1, spaceBetween: 40 },
+        1200: { slidesPerView: 3, }
+    }
+}
+axios.get('testimonial').then(({ data }) => testimonials.value = data);
+
+const teams = [
+    { nim: '1227050035', avatar: 'devi-mulyana', name: 'Devi Mulyana' },
+    { nim: '1227050018', avatar: 'alya', name: 'Alya Nurul Lathifah' },
+    { nim: '1227050014', avatar: 'alfin', name: 'Alfin Nurul Yamin' },
+    { nim: '1227050036', avatar: 'dika-haekal', name: 'Dika Haekal Firza Pratama' },
+    { nim: '1227050019', avatar: 'amanda', name: 'Amanda Zulfa Salsabila' },
+    { nim: '1227050008', avatar: 'aghiz', name: 'Aghiz Ghifari' },
+];
 </script>
 
 <template>
@@ -186,117 +215,23 @@ const addToCart = (product) => {
                         <p>Apa yang mereka katakan tentang kami</p>
                     </header>
 
-                    <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="200">
-                        <div class="swiper-wrapper">
+                    <swiper class="testimonials-slider" v-bind="swiperTestimonial">
 
-                            <div class="swiper-slide">
-                                <div class="testimonial-item">
-                                    <div class="stars">
-                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i>
-                                    </div>
-                                    <p>
-                                        Proin iaculis purus consequat sem cure digni ssim donec porttitora entum
-                                        suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et.
-                                        Maecen aliquam, risus at semper.
-                                    </p>
-                                    <div class="profile mt-auto">
-                                        <img src="/guest/img/testimonials/testimonials-1.jpg" class="testimonial-img"
-                                            alt="">
-                                        <h3>Saul Goodman</h3>
-                                        <h4>Ceo &amp; Founder</h4>
-                                    </div>
+                        <swiper-slide v-for="testimonial in testimonials">
+                            <div class="testimonial-item">
+                                <div class="stars">
+                                    <star-rating :inline="true" :star-size="20" :increment=".5" :read-only="true"
+                                        :show-rating="false" :rating="testimonial.rating" />
                                 </div>
-                            </div><!-- End testimonial item -->
-
-                            <div class="swiper-slide">
-                                <div class="testimonial-item">
-                                    <div class="stars">
-                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i>
-                                    </div>
-                                    <p>
-                                        Export tempor illum tamen malis malis eram quae irure esse labore quem cillum
-                                        quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat
-                                        irure amet legam anim culpa.
-                                    </p>
-                                    <div class="profile mt-auto">
-                                        <img src="/guest/img/testimonials/testimonials-2.jpg" class="testimonial-img"
-                                            alt="">
-                                        <h3>Sara Wilsson</h3>
-                                        <h4>Designer</h4>
-                                    </div>
+                                <p>{{ testimonial.comment }}</p>
+                                <div class="profile mt-auto">
+                                    <img :src="testimonial.user?.avatar" class="testimonial-img" alt="">
+                                    <h3>{{ testimonial.user?.name }}</h3>
                                 </div>
-                            </div><!-- End testimonial item -->
+                            </div>
+                        </swiper-slide>
 
-                            <div class="swiper-slide">
-                                <div class="testimonial-item">
-                                    <div class="stars">
-                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i>
-                                    </div>
-                                    <p>
-                                        Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem
-                                        veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis
-                                        sint minim.
-                                    </p>
-                                    <div class="profile mt-auto">
-                                        <img src="/guest/img/testimonials/testimonials-3.jpg" class="testimonial-img"
-                                            alt="">
-                                        <h3>Jena Karlis</h3>
-                                        <h4>Store Owner</h4>
-                                    </div>
-                                </div>
-                            </div><!-- End testimonial item -->
-
-                            <div class="swiper-slide">
-                                <div class="testimonial-item">
-                                    <div class="stars">
-                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i>
-                                    </div>
-                                    <p>
-                                        Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim
-                                        fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore
-                                        quem dolore labore illum veniam.
-                                    </p>
-                                    <div class="profile mt-auto">
-                                        <img src="/guest/img/testimonials/testimonials-4.jpg" class="testimonial-img"
-                                            alt="">
-                                        <h3>Matt Brandon</h3>
-                                        <h4>Freelancer</h4>
-                                    </div>
-                                </div>
-                            </div><!-- End testimonial item -->
-
-                            <div class="swiper-slide">
-                                <div class="testimonial-item">
-                                    <div class="stars">
-                                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                            class="bi bi-star-fill"></i>
-                                    </div>
-                                    <p>
-                                        Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor
-                                        noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam
-                                        esse veniam culpa fore nisi cillum quid.
-                                    </p>
-                                    <div class="profile mt-auto">
-                                        <img src="/guest/img/testimonials/testimonials-5.jpg" class="testimonial-img"
-                                            alt="">
-                                        <h3>John Larson</h3>
-                                        <h4>Entrepreneur</h4>
-                                    </div>
-                                </div>
-                            </div><!-- End testimonial item -->
-
-                        </div>
-                        <div class="swiper-pagination"></div>
-                    </div>
+                    </swiper>
 
                 </div>
 
@@ -308,17 +243,17 @@ const addToCart = (product) => {
                 <div class="container" data-aos="fade-up">
 
                     <header class="section-header">
-                        <h2>Team</h2>
-                        <p>Our hard working team</p>
+                        <h2 class="text-black">Team</h2>
+                        <p class="text-dark">Kelompok 1</p>
                     </header>
 
                     <div class="row gy-4">
 
                         <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up"
-                            data-aos-delay="100">
+                            data-aos-delay="100" v-for="team in teams">
                             <div class="member">
                                 <div class="member-img">
-                                    <img src="/guest/img/team/devi-mulyana.jpg" class="img-fluid" alt="">
+                                    <img :src="`/guest/img/team/${team.avatar}.jpg`" class="img-fluid" alt="">
                                     <div class="social">
                                         <a href=""><i class="bi bi-twitter"></i></a>
                                         <a href=""><i class="bi bi-facebook"></i></a>
@@ -327,107 +262,8 @@ const addToCart = (product) => {
                                     </div>
                                 </div>
                                 <div class="member-info">
-                                    <h4>Devi Mulyana</h4>
-                                    <span>1227050035</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up"
-                            data-aos-delay="200">
-                            <div class="member">
-                                <div class="member-img">
-                                    <img src="/guest/img/team/alya.jpg" class="img-fluid" alt="">
-                                    <div class="social">
-                                        <a href=""><i class="bi bi-twitter"></i></a>
-                                        <a href=""><i class="bi bi-facebook"></i></a>
-                                        <a href=""><i class="bi bi-instagram"></i></a>
-                                        <a href=""><i class="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                                <div class="member-info">
-                                    <h4>Alya Nurul Lathifah</h4>
-                                    <span>1227050018</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up"
-                            data-aos-delay="300">
-                            <div class="member">
-                                <div class="member-img">
-                                    <img src="/guest/img/team/alfin.jpg" class="img-fluid" alt="">
-                                    <div class="social">
-                                        <a href=""><i class="bi bi-twitter"></i></a>
-                                        <a href=""><i class="bi bi-facebook"></i></a>
-                                        <a href=""><i class="bi bi-instagram"></i></a>
-                                        <a href=""><i class="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                                <div class="member-info">
-                                    <h4>Alfin Nurul Yamin</h4>
-                                    <span>1227050014</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row gy-4 mt-4">
-
-                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up"
-                            data-aos-delay="100">
-                            <div class="member">
-                                <div class="member-img">
-                                    <img src="/guest/img/team/dika-haekal.jpg" class="img-fluid" alt="">
-                                    <div class="social">
-                                        <a href=""><i class="bi bi-twitter"></i></a>
-                                        <a href=""><i class="bi bi-facebook"></i></a>
-                                        <a href=""><i class="bi bi-instagram"></i></a>
-                                        <a href=""><i class="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                                <div class="member-info">
-                                    <h4>Dika Haekal Firza Pratama</h4>
-                                    <span>1227050036</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up"
-                            data-aos-delay="300">
-                            <div class="member">
-                                <div class="member-img">
-                                    <img src="/guest/img/team/amanda.jpg" class="img-fluid" alt="">
-                                    <div class="social">
-                                        <a href=""><i class="bi bi-twitter"></i></a>
-                                        <a href=""><i class="bi bi-facebook"></i></a>
-                                        <a href=""><i class="bi bi-instagram"></i></a>
-                                        <a href=""><i class="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                                <div class="member-info">
-                                    <h4>Amanda Zulfa Salsabila</h4>
-                                    <span>1227050019</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up"
-                            data-aos-delay="200">
-                            <div class="member">
-                                <div class="member-img">
-                                    <img src="/guest/img/team/aghiz.jpg" class="img-fluid" alt="">
-                                    <div class="social">
-                                        <a href=""><i class="bi bi-twitter"></i></a>
-                                        <a href=""><i class="bi bi-facebook"></i></a>
-                                        <a href=""><i class="bi bi-instagram"></i></a>
-                                        <a href=""><i class="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                                <div class="member-info">
-                                    <h4>Aghiz Ghifari</h4>
-                                    <span>1227050008</span>
+                                    <h4>{{ team.name }}</h4>
+                                    <span>{{ team.nim }}</span>
                                 </div>
                             </div>
                         </div>
@@ -437,15 +273,6 @@ const addToCart = (product) => {
                 </div>
 
             </section><!-- End Team Section -->
-
-            <!-- ======= Contact Section ======= -->
-            <section id="checkout" class="checkout">
-
-                <div class="container" data-aos="fade-up">
-
-                </div>
-
-            </section><!-- End Contact Section -->
 
         </main><!-- End #main -->
     </div>

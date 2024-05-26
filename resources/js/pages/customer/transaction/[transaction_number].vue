@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { number_format } from "../../../helpers";
-import { Toast } from "../../../plugins/swal";
+import { Confirm, Toast } from "../../../plugins/swal";
 import { useCoorStore } from "../../../stores/coor";
 import longText from "../../../components/long-text.vue";
 
@@ -47,23 +47,36 @@ const paymentCheckStatus = () => {
     if (transaction.value.snap_token && transaction.value.status == "pending")
         snap.pay(transaction.value.snap_token, {
             onSuccess: function (result) {
-                axios.post(
-                    `transaction/${result.order_id.split("-")[1]
-                    }/midtrans-callback`,
-                    result
-                );
+                axios.post(`transaction/${result.order_id.split("-")[1]}/midtrans-callback`, result);
             },
             onPending: function (result) {
-                axios.post(
-                    `transaction/${result.order_id.split("-")[1]
-                    }/midtrans-callback`,
-                    result
-                );
+                axios.post(`transaction/${result.order_id.split("-")[1]}/midtrans-callback`, result);
             }
         });
     else Toast.fire({ title: "Maaf tidak bisa cek status", icon: "error" });
 };
-const center = useCoorStore()
+const center = useCoorStore();
+const formData = ref({});
+const loading = ref(false);
+const comment = () => {
+    Confirm.fire({
+        title: 'Apakah anda yakin akan memberikan testimoni?',
+        text: 'Testimoni anda tidak bisa diedit dan dihapus!',
+        cancelButtonColor: 'var(--bs-warning)',
+        confirmButtonColor: 'var(--bs-success)',
+    }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+            loading.value = true;
+            formData.value.transaction_id = transaction.value.id;
+            axios.post('testimonial', formData.value).then(({ data }) => {
+                Toast.fire({ title: data.message });
+                transaction.value.testimonial = data.testimonial;
+            }).catch(({ response }) => {
+                Toast.fire({ title: response.data?.message, icon: 'error' });
+            }).finally(() => loading.value = false);
+        }
+    })
+}
 </script>
 
 <template>
@@ -198,7 +211,33 @@ const center = useCoorStore()
                                 </tr>
                             </table>
                             <a :href="`https://www.google.com/maps/search/?api=1&query=${center.lat}%2C${center.lng}`"
-                                target="_blank" class="btn btn-success w-100 mt-2">Cek Lokasi</a>
+                                target="_blank" class="btn btn-success w-100 mt-2"
+                                v-if="transaction.status != 'completed'">Cek Lokasi</a>
+                            <template v-else-if="transaction?.testimonial == null">
+                                <hr>
+                                <h3 class="text-center">Berikan Testimoni Anda Jika Berkenan</h3>
+                                <star-rating :increment=".5" v-model:rating="formData.rating"
+                                    class="justify-content-center" />
+                                <div class="form-group">
+                                    <label for="comment" class="form-label">Komentar</label>
+                                    <textarea id="comment" v-model="formData.comment" class="form-control" rows="5" />
+                                </div>
+                                <button class="btn btn-primary w-100 mt-2" @click="comment" :disabled="loading">
+                                    <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Simpan
+                                </button>
+                            </template>
+                            <template v-else-if="transaction?.testimonial">
+                                <hr>
+                                <h3 class="text-center">Testimoni Anda</h3>
+                                <star-rating :increment=".5" :read-only="true" v-model:rating="transaction.testimonial.rating"
+                                    class="justify-content-center" />
+                                <div class="form-group">
+                                    <label for="comment" class="form-label">Komentar</label>
+                                    <textarea id="comment" readonly v-model="transaction.testimonial.comment" class="form-control" rows="5" />
+                                </div>
+                            </template>
                             <button class="btn btn-info w-100 mt-2"
                                 v-if="transaction.payment_method == 'Transfer' && transaction.status == 'pending'"
                                 @click="paymentCheckStatus">Bayar</button>

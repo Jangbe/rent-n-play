@@ -18,18 +18,9 @@
     <script src="/guest/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/guest/vendor/glightbox/js/glightbox.min.js"></script>
     <script src="/guest/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="/guest/vendor/swiper/swiper-bundle.min.js"></script>
-    <script src="/guest/vendor/php-email-form/validate.js"></script>
 
     <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/admin/vendor/apexcharts/apexcharts.min.js"></script>
-    <script src="/admin/vendor/chart.js/chart.umd.js"></script>
-    <script src="/admin/vendor/echarts/echarts.min.js"></script>
-    <script src="/admin/vendor/quill/quill.min.js"></script>
-    <script src="/admin/vendor/tinymce/tinymce.min.js"></script>
-    <script src="/admin/vendor/php-email-form/validate.js"></script>
-
-    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 
     @if (config('services.midtrans.isProduction'))
         <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}">

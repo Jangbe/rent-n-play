@@ -34,15 +34,15 @@ class DashboardController extends Controller
         if ($filter_report == 'DAY') {
             $format = ['%Y-%m-%d %H:00:00', 'Y-m-d H:00:00'];
             $period = now()->setHour(1)->range($now, 1, 'hour');
-            $between = [now()->setHour(1), now()];
+            $between = [now()->setHour(0)->setMinute(0)->setSecond(0), now()];
         } else if ($filter_report == 'MONTH') {
             $format = ['%Y-%m-%d', 'Y-m-d'];
             $period = now()->setDay(1)->range($now, 1, 'day');
-            $between = [now()->setDay(1), now()];
+            $between = [now()->setDay(1)->setHour(0)->setMinute(0)->setSecond(0), now()];
         } else {
             $format = ['%Y-%m', 'Y-m'];
             $period = now()->setMonth(1)->range($now, 1, 'month');
-            $between = [now()->setMonth(1), now()];
+            $between = [now()->setMonth(1)->setHour(0)->setMinute(0)->setSecond(0), now()];
         }
 
         $total = "(SELECT SUM(total) FROM transaction_detail WHERE transaction_id = id) * days + delivery_fee";
