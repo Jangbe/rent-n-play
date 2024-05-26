@@ -71,7 +71,10 @@ const swiperTestimonial = {
         1200: { slidesPerView: 3, }
     }
 }
-axios.get('testimonial').then(({ data }) => testimonials.value = data);
+axios.get('testimonial').then(({ data }) => {
+    testimonials.value = data
+    AOS.refresh()
+});
 
 const teams = [
     { nim: '1227050035', avatar: 'devi-mulyana', name: 'Devi Mulyana' },
@@ -215,7 +218,8 @@ const teams = [
                         <p>Apa yang mereka katakan tentang kami</p>
                     </header>
 
-                    <swiper class="testimonials-slider" v-bind="swiperTestimonial">
+                    <swiper class="testimonials-slider" v-bind="swiperTestimonial" data-aos="fade-up"
+                        data-aos-delay="100">
 
                         <swiper-slide v-for="testimonial in testimonials">
                             <div class="testimonial-item">

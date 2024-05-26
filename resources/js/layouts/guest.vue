@@ -248,6 +248,8 @@ export default {
         }
 
         this.aos_init();
+
+        new PureCounter();
     }
 }
 </script>
