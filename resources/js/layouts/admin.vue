@@ -9,8 +9,6 @@
         <!-- Vendor CSS Files -->
         <link href="/admin/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
         <link href="/admin/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-        <link href="/admin/vendor/quill/quill.snow.css" rel="stylesheet">
-        <link href="/admin/vendor/quill/quill.bubble.css" rel="stylesheet">
         <link href="/admin/vendor/remixicon/remixicon.css" rel="stylesheet">
 
         <!-- Template Main CSS File -->
