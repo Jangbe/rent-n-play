@@ -125,12 +125,12 @@ export default {
     data: () => ({ userStore: useUserStore() }),
     methods: {
         aos_init: function () {
-            AOS.init({
-                duration: 1000,
-                easing: "ease-in-out",
-                once: true,
-                mirror: false
-            });
+            // AOS.init({
+            //     duration: 1000,
+            //     easing: "ease-in-out",
+            //     once: true,
+            //     mirror: false
+            // });
         }
     },
     mounted() {

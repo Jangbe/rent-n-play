@@ -29,6 +29,14 @@
         <script src="https://app.sandbox.midtrans.com/snap/snap.js"
             data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
     @endif
+    <script>
+        AOS.init({
+            duration: 1000,
+            easing: "ease-in-out",
+            once: true,
+            mirror: false
+        });
+    </script>
     <!-- Template Main JS File -->
     @vite(['resources/js/app.js'])
 </body>

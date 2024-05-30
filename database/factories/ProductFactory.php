@@ -17,9 +17,10 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $picture = 'pictures/' . $this->faker->file(public_path('products'), storage_path('app/public/pictures/'), false);
         return [
             'category_id' => $this->faker->randomElement(Category::pluck('id')->toArray()),
-            'picture' => $this->faker->imageUrl(),
+            'picture' => $picture,
             'name' => $this->faker->text(50),
             'description' => $this->faker->sentences(6, true),
             'price' => $this->faker->numberBetween(5000, 50000),
