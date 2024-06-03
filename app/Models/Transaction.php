@@ -12,12 +12,23 @@ class Transaction extends Model
     protected $guarded = ['id'];
     public $casts = ['order_datetime' => 'datetime'];
 
-    public $appends = ['total'];
+    public $appends = ['total', 'subtotal'];
 
     public function getTotalAttribute()
     {
         $total = $this->transactionDetails->reduce(fn ($a, $b) => $a + $b->total, 0);
-        return $total * $this->days + $this->delivery_fee;
+        $days = $this->extraTimes->reduce(fn ($a, $b) => $a + $b->days, $this->days);
+        return $total * $days + $this->delivery_fee;
+    }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->transactionDetails->reduce(fn ($a, $b) => $a + $b->total, 0);
+    }
+
+    public function extraTimes()
+    {
+        return $this->hasMany(ExtraTime::class);
     }
 
     public function user()

@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { number_format } from "../../../helpers";
-import { Toast } from "../../../plugins/swal";
+import { Toast, Confirm } from "../../../plugins/swal";
 import { useCoorStore } from "../../../stores/coor";
 import LongText from "../../../components/long-text.vue";
 
@@ -65,6 +65,13 @@ const updateStatus = () => {
         });
 };
 const center = useCoorStore();
+const verifyPaid = (id) => {
+    Confirm.fire({
+        title: 'Apakah kamu akan mengkonfirmasi pembayaran ini?'
+    }).then(({ isConfirmed }) => {
+        if (isConfirmed) axios.post(`transaction/${id}/verify-paid`);
+    })
+}
 </script>
 
 <template>
@@ -204,6 +211,33 @@ const center = useCoorStore();
                                     <td>:</td>
                                     <td>{{ number_format(transaction.total) }}</td>
                                 </tr>
+                            </table>
+                            <h5 class="text-primary fw-bold text-center my-1"
+                                v-if="transaction.extra_times?.length > 0">Tambahan Waktu</h5>
+                            <table class="table table-striped" v-if="transaction.extra_times?.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Hari</th>
+                                        <th>Total</th>
+                                        <th>Dibayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(et, i) in transaction.extra_times ?? []">
+                                        <td>{{ i + 1 }}</td>
+                                        <td>{{ et.days }}</td>
+                                        <td>{{ number_format(transaction.subtotal * et.days) }}</td>
+                                        <td>
+                                            <button class="btn btn-success" v-if="et.is_paid" disabled>
+                                                <i class="bx bx-check"></i>
+                                            </button>
+                                            <button class="btn btn-warning" v-else @click="verifyPaid(et.id)">
+                                                <i class="bx bx-check"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
                             <div class="form-group mt-3">
                                 <div class="input-group">

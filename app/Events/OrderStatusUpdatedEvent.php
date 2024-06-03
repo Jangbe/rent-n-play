@@ -19,7 +19,7 @@ class OrderStatusUpdatedEvent implements ShouldBroadcast
      */
     public function __construct($transaction)
     {
-        $this->transaction = $transaction;
+        $this->transaction = $transaction->load(['user', 'address', 'extraTimes', 'transactionDetails.product', 'testimonial']);
     }
 
     /**

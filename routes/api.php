@@ -57,6 +57,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('transaction/get-transaction-number', [TransactionController::class, 'getTransactionNumber']);
     Route::get('transaction/{id}', [TransactionController::class, 'show']);
     Route::post('transaction', [TransactionController::class, 'store']);
+    Route::post('transaction/{extraTime}/verify-paid', [TransactionController::class, 'verifyPaid']);
+    Route::post('transaction/{transaction:transaction_number}/{extraTime}/callback', [TransactionController::class, 'midtransExtraTimeCallback']);
+    Route::post('transaction/{transaction:transaction_number}/extra-time', [TransactionController::class, 'addExtraTime']);
     Route::put('transaction/{transaction:transaction_number}', [TransactionController::class, 'update']);
     Route::post('transaction/{transaction:transaction_number}/midtrans-callback', [TransactionController::class, 'midtransCallback']);
     Route::delete('transaction/{id}', [TransactionController::class, 'destroy']);

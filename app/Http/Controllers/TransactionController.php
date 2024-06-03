@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\DashboardEvent;
+use App\Events\OrderStatusUpdatedEvent;
+use App\Models\ExtraTime;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Notifications\InvoicePaid;
@@ -124,7 +126,7 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-        $transaction = Transaction::with(['user', 'address', 'transactionDetails.product', 'testimonial'])->where('transaction_number', $id)->firstOrFail();
+        $transaction = Transaction::with(['user', 'address', 'extraTimes', 'transactionDetails.product', 'testimonial'])->where('transaction_number', $id)->firstOrFail();
         if ($transaction->user_id != auth()->id() && auth()->user()->role != 'Admin') return abort(404);
         return response()->json($transaction);
     }
@@ -147,6 +149,62 @@ class TransactionController extends Controller
         broadcast(new DashboardEvent());
 
         return response()->json('Status transaksi berhasil diubah');
+    }
+
+    public function addExtraTime(Request $request, Transaction $transaction)
+    {
+        $validate = $request->validate([
+            'payment_method' => 'required',
+            'days' => 'required|numeric'
+        ]);
+        $et = $transaction->extraTimes()->create($validate);
+        $price = $transaction->transactionDetails->reduce(fn ($a, $b) => $a + $b->total, 0);
+        if ($request->payment_method == 'Transfer') {
+            $payload = [
+                'transaction_details' => [
+                    'order_id' => now()->unix() . "-{$et->id}-extra-time-{$transaction->transaction_number}",
+                ],
+                'customer_details' => [
+                    'first_name' => $transaction->user->name,
+                    'email' => $transaction->user->email
+                ],
+                'item_details' => [[
+                    'id' => "{$transaction->transaction_number}-extra-time-{$et->id}",
+                    'price' => $price,
+                    'quantity' => $et->days,
+                    'name' => "Perpanjangan Waktu $et->days hari",
+                    'merchant_name' => config('app.name')
+                ]]
+            ];
+
+            $snapToken = \Midtrans\Snap::getSnapToken($payload);
+            $et->update(['snap_token' => $snapToken]);
+        } else {
+            $snapToken = null;
+        }
+        broadcast(new OrderStatusUpdatedEvent($transaction));
+        broadcast(new DashboardEvent());
+        return response()->json([
+            'snapToken' => $snapToken,
+            'message' => 'Berhasil memperpanjang sewa'
+        ]);
+    }
+
+    public function midtransExtraTimeCallback(Request $request, Transaction $transaction, ExtraTime $extraTime)
+    {
+        $response = \Midtrans\Transaction::status($request->get('order_id'));
+        if ($response && $response->fraud_status == 'accept') {
+            $extraTime->update(['is_paid' => true]);
+            broadcast(new OrderStatusUpdatedEvent($transaction));
+            broadcast(new DashboardEvent());
+        }
+    }
+    
+    public function verifyPaid(ExtraTime $extraTime)
+    {
+        $extraTime->update(['is_paid' => true]);
+        broadcast(new OrderStatusUpdatedEvent($extraTime->transaction));
+        broadcast(new DashboardEvent());
     }
 
     public function midtransCallback(Request $request, Transaction $transaction)

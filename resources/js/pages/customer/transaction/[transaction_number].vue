@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { number_format } from "../../../helpers";
 import { Confirm, Toast } from "../../../plugins/swal";
@@ -11,6 +11,7 @@ const transaction = ref({ total: 0, transaction_details: [] });
 const time = ref(null);
 axios.get("transaction/" + route.params.transaction_number).then(({ data }) => {
     transaction.value = data;
+    formExtraTime.value.subtotal = data.subtotal;
     time.value =
         moment(data.order_datetime)
             .add(1, "day")
@@ -75,6 +76,26 @@ const comment = () => {
                 Toast.fire({ title: response.data?.message, icon: 'error' });
             }).finally(() => loading.value = false);
         }
+    })
+}
+var modal = null;
+onMounted(() => {
+    modal = new bootstrap.Modal(document.querySelector('#modal-extra-time'));
+})
+const formExtraTime = ref({ days: 1 });
+const addExtraTime = () => {
+    axios.post(`transaction/${route.params.transaction_number}/extra-time`, formExtraTime.value).then(({ data }) => {
+        Toast.fire({ title: data.message });
+        modal.toggle();
+        if (data.snapToken)
+            snap.pay(data.snapToken, {
+                onSuccess: function (result) {
+                    axios.post(`transaction/${route.params.transaction_number}/${result.order_id.split('-')[1]}/callback`, result);
+                },
+                onPending: function (result) {
+                    axios.post(`transaction/${route.params.transaction_number}/${result.order_id.split('-')[1]}/callback`, result);
+                },
+            })
     })
 }
 </script>
@@ -210,6 +231,33 @@ const comment = () => {
                                     <td>{{ number_format(transaction.total) }}</td>
                                 </tr>
                             </table>
+                            <h5 class="text-primary fw-bold text-center my-1"
+                                v-if="transaction.extra_times?.length > 0">Tambahan Waktu</h5>
+                            <table class="table table-striped" v-if="transaction.extra_times?.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Hari</th>
+                                        <th>Total</th>
+                                        <th>Dibayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(et, i) in transaction.extra_times ?? []">
+                                        <td>{{ i + 1 }}</td>
+                                        <td>{{ et.days }}</td>
+                                        <td>{{ number_format(transaction.subtotal * et.days) }}</td>
+                                        <td>
+                                            <button class="btn btn-success" v-if="et.is_paid" disabled>
+                                                <i class="bx bx-check"></i>
+                                            </button>
+                                            <button class="btn btn-warning" v-else>
+                                                <i class="bx bx-info-circle"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <a :href="`https://www.google.com/maps/search/?api=1&query=${center.lat}%2C${center.lng}`"
                                 target="_blank" class="btn btn-success w-100 mt-2"
                                 v-if="transaction.status != 'completed'">Cek Lokasi</a>
@@ -231,21 +279,70 @@ const comment = () => {
                             <template v-else-if="transaction?.testimonial">
                                 <hr>
                                 <h3 class="text-center">Testimoni Anda</h3>
-                                <star-rating :increment=".5" :read-only="true" v-model:rating="transaction.testimonial.rating"
-                                    class="justify-content-center" />
+                                <star-rating :increment=".5" :read-only="true"
+                                    v-model:rating="transaction.testimonial.rating" class="justify-content-center" />
                                 <div class="form-group">
                                     <label for="comment" class="form-label">Komentar</label>
-                                    <textarea id="comment" readonly v-model="transaction.testimonial.comment" class="form-control" rows="5" />
+                                    <textarea id="comment" readonly v-model="transaction.testimonial.comment"
+                                        class="form-control" rows="5" />
                                 </div>
                             </template>
                             <button class="btn btn-info w-100 mt-2"
                                 v-if="transaction.payment_method == 'Transfer' && transaction.status == 'pending'"
                                 @click="paymentCheckStatus">Bayar</button>
+                            <button class="btn btn-warning w-100 mt-2" v-if="transaction.status == 'ongoing'"
+                                @click="modal?.toggle()">
+                                Perpanjang Waktu
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <div class="modal fade" id="modal-extra-time">
+            <div class="modal-dialog modal-sm-fullscreen">
+                <form @submit.prevent="addExtraTime" class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Form Perpanjang Waktu</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="payment_method-et" class="form-label">Metode Pembayaran</label>
+                            <select id="payment_method-et" v-model="formExtraTime.payment_method" class="form-select">
+                                <option value="Cash">Tunai</option>
+                                <option>Transfer</option>
+                            </select>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <div class="form-group">
+                                    <label for="total-et" class="form-label">Total Tambahan</label>
+                                    <input type="text" id="total-et" readonly class="form-control"
+                                        :value="number_format(formExtraTime.subtotal * formExtraTime?.days ?? 1)">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="days-et" class="form-label">Tambahan Hari</label>
+                                    <input type="number" id="days-et" class="form-control" min="1"
+                                        v-model="formExtraTime.days">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button class="btn btn-primary" :disabled="loading">
+                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </template>
 
