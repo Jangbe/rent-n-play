@@ -15,12 +15,17 @@ const fetchData = () =>
         .then(({ data }) => {
             formData.value = { ...data };
             transaction.value = data;
-            time.value =
-                moment(data.order_datetime)
-                    .add(1, "day")
-                    // .set('hour', 23).set('minute', 59).set('second', 59)
-                    .toDate() - new Date();
+            setTime();
         });
+const setTime = () => {
+    if (transaction.value.status != 'ongoing') return;
+    time.value =
+        moment(transaction.value.order_datetime)
+            .add((transaction.value?.extra_times ?? []).filter(e => e.is_paid).reduce((a, b) => a + b.days, transaction.value.days), "day")
+            // .set('hour', 23).set('minute', 59).set('second', 59)
+            .toDate() - new Date();
+};
+watch(transaction, setTime);
 fetchData();
 const statusses = {
     pending: "Ditunda",

@@ -12,12 +12,17 @@ const time = ref(null);
 axios.get("transaction/" + route.params.transaction_number).then(({ data }) => {
     transaction.value = data;
     formExtraTime.value.subtotal = data.subtotal;
+    setTime();
+});
+const setTime = () => {
+    if (transaction.value.status != 'ongoing') return;
     time.value =
-        moment(data.order_datetime)
-            .add(1, "day")
+        moment(transaction.value.order_datetime)
+            .add((transaction.value?.extra_times ?? []).filter(e => e.is_paid).reduce((a, b) => a + b.days, transaction.value.days), "day")
             // .set('hour', 23).set('minute', 59).set('second', 59)
             .toDate() - new Date();
-});
+};
+watch(transaction, setTime);
 const resolveStatus = status => {
     switch (status) {
         case "pending":
