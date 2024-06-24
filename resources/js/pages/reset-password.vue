@@ -13,8 +13,7 @@ import InputOtp from '../components/input-otp.vue';
 
 const route = useRoute();
 const router = useRouter();
-const formData = ref({ email: route.query.email, token: route.query.otp });
-
+const formData = ref({ email: route.query.email, token: route.query.otp ?? '' });
 const loading = ref(false);
 const submit = () => {
     loading.value = true;

@@ -1,0 +1,399 @@
+|   .editorconfig
+|   .env
+|   .env.example
+|   .gitattributes
+|   .gitignore
+|-- artisan
+|-- composer.json
+|-- composer.lock
+|-- package-lock.json
+|-- package.json
+|-- phpunit.xml
+|-- README.md
+|-- vite.config.js
+|-- app/
+|   |-- Casts/
+|   |   |-- AvatarCast.php
+|   |-- Console/
+|   |   |-- Kernel.php
+|   |-- Events/
+|   |   |-- DashboardEvent.php
+|   |   |-- OrderPlacedEvent.php
+|   |   |-- OrderStatusUpdatedEvent.php
+|   |-- Exceptions/
+|   |   |-- Handler.php
+|   |-- Http/
+|   |   |-- Kernel.php
+|   |   |-- Controllers/
+|   |   |   |-- AddressController.php
+|   |   |   |-- CategoryController.php
+|   |   |   |-- Controller.php
+|   |   |   |-- DashboardController.php
+|   |   |   |-- ProductController.php
+|   |   |   |-- ProfileController.php
+|   |   |   |-- TestimonialController.php
+|   |   |   |-- TransactionController.php
+|   |   |   |-- UserController.php
+|   |   |   |-- Api/
+|   |   |   |   |-- AuthController.php
+|   |   |-- Middleware/
+|   |   |   |-- Authenticate.php
+|   |   |   |-- EncryptCookies.php
+|   |   |   |-- PreventRequestsDuringMaintenance.php
+|   |   |   |-- RedirectIfAuthenticated.php
+|   |   |   |-- TrimStrings.php
+|   |   |   |-- TrustHosts.php
+|   |   |   |-- TrustProxies.php
+|   |   |   |-- ValidateSignature.php
+|   |   |   |-- VerifyCsrfToken.php
+|   |-- Mail/
+|   |   |-- OtpMail.php
+|   |-- Models/
+|   |   |-- Address.php
+|   |   |-- Category.php
+|   |   |-- ExtraTime.php
+|   |   |-- Product.php
+|   |   |-- SocialAccount.php
+|   |   |-- Testimonial.php
+|   |   |-- Transaction.php
+|   |   |-- TransactionDetail.php
+|   |   |-- User.php
+|   |-- Notifications/
+|   |   |-- InvoicePaid.php
+|   |   |-- OrderPlaced.php
+|   |   |-- OrderStatusUpdated.php
+|   |-- Providers/
+|   |   |-- AppServiceProvider.php
+|   |   |-- AuthServiceProvider.php
+|   |   |-- BroadcastServiceProvider.php
+|   |   |-- EventServiceProvider.php
+|   |   |-- RouteServiceProvider.php
+|-- bootstrap/
+|   |-- app.php
+|-- config/
+|   |-- app.php
+|   |-- auth.php
+|   |-- broadcasting.php
+|   |-- cache.php
+|   |-- cors.php
+|   |-- database.php
+|   |-- filesystems.php
+|   |-- hashing.php
+|   |-- logging.php
+|   |-- sail.php
+|   |-- queue.php
+|   |-- sanctum.php
+|   |-- services.php
+|   |-- session.php
+|   |-- view.php
+|-- database/
+|   |-- .gitignore
+|   |-- factories/
+|   |   |-- CategoryFactory.php
+|   |   |-- ProductFactory.php
+|   |   |-- UserFactory.php
+|   |-- migrations/
+|   |   |-- 2014_10_12_000000_create_users_table.php
+|   |   |-- 2014_10_12_100000_create_password_reset_tokens_table.php
+|   |   |-- 2019_08_19_000000_create_failed_jobs_table.php
+|   |   |-- 2019_12_14_000001_create_personal_access_tokens_table.php
+|   |   |-- 2024_05_03_062743_create_categories_table.php
+|   |   |-- 2024_05_06_015914_create_social_accounts_table.php
+|   |   |-- 2024_05_09_233104_create_products_table.php
+|   |   |-- 2024_05_11_230819_create_identities_table.php
+|   |   |-- 2024_05_12_031835_create_addresses_table.php
+|   |   |-- 2024_05_12_053155_add_picture_to_products_table.php
+|   |   |-- 2024_05_12_060032_add_role_to_users_table.php
+|   |   |-- 2024_05_13_140206_add_avatar_to_users_table.php
+|   |   |-- 2024_05_14_023932_create_transactions_table.php
+|   |   |-- 2024_05_19_235531_create_transaction_detail_table.php
+|   |   |-- 2024_05_21_140139_create_notifications_table.php
+|   |   |-- 2024_05_22_011827_add_snap_token_to_transactions_table.php
+|   |   |-- 2024_05_22_085251_add_days_to_transactions_table.php
+|   |   |-- 2024_05_24_005202_add_lat_lng_to_addresses_table.php
+|   |   |-- 2024_05_26_010439_create_testimonials_table.php
+|   |   |-- 2024_06_03_061750_create_extra_times_table.php
+|   |-- seeders/
+|   |   |-- DatabaseSeeder.php
+|-- public/
+|   |-- .htaccess
+|   |-- default.jpg
+|   |-- favicon.ico
+|   |-- hot
+|   |-- index.php
+|   |-- notification.mp3
+|   |-- robots.txt
+|   |-- admin/
+|   |   |-- css/
+|   |   |   |-- style.css
+|   |   |-- img/
+|   |   |   |-- apple-touch-icon.png
+|   |   |   |-- favicon.png
+|   |   |   |-- logo.png
+|   |   |   |-- not-found.svg
+|   |   |-- vendor/
+|   |   |   |-- apexcharts/
+|   |   |   |   |-- apexcharts.min.js
+|   |   |   |   |-- locales/
+|   |   |   |   |   |-- id.json
+|   |   |   |-- bootstrap/
+|   |   |   |   |-- css/
+|   |   |   |   |   |-- bootstrap-grid.css
+|   |   |   |   |   |-- bootstrap-grid.css.map
+|   |   |   |   |   |-- bootstrap-grid.min.css
+|   |   |   |   |   |-- bootstrap-grid.min.css.map
+|   |   |   |   |   |-- bootstrap-grid.rtl.css
+|   |   |   |   |   |-- bootstrap-grid.rtl.css.map
+|   |   |   |   |   |-- bootstrap-grid.rtl.min.css
+|   |   |   |   |   |-- bootstrap-grid.rtl.min.css.map
+|   |   |   |   |   |-- bootstrap-reboot.css
+|   |   |   |   |   |-- bootstrap-reboot.css.map
+|   |   |   |   |   |-- bootstrap-reboot.min.css
+|   |   |   |   |   |-- bootstrap-reboot.min.css.map
+|   |   |   |   |   |-- bootstrap-reboot.rtl.css
+|   |   |   |   |   |-- bootstrap-reboot.rtl.css.map
+|   |   |   |   |   |-- bootstrap-reboot.rtl.min.css
+|   |   |   |   |   |-- bootstrap-reboot.rtl.min.css.map
+|   |   |   |   |   |-- bootstrap-utilities.css
+|   |   |   |   |   |-- bootstrap-utilities.css.map
+|   |   |   |   |   |-- bootstrap-utilities.min.css
+|   |   |   |   |   |-- bootstrap-utilities.min.css.map
+|   |   |   |   |   |-- bootstrap-utilities.rtl.css
+|   |   |   |   |   |-- bootstrap-utilities.rtl.css.map
+|   |   |   |   |   |-- bootstrap-utilities.rtl.min.css
+|   |   |   |   |   |-- bootstrap-utilities.rtl.min.css.map
+|   |   |   |   |   |-- bootstrap.css
+|   |   |   |   |   |-- bootstrap.css.map
+|   |   |   |   |   |-- bootstrap.min.css
+|   |   |   |   |   |-- bootstrap.min.css.map
+|   |   |   |   |   |-- bootstrap.rtl.css
+|   |   |   |   |   |-- bootstrap.rtl.css.map
+|   |   |   |   |   |-- bootstrap.rtl.min.css
+|   |   |   |   |   |-- bootstrap.rtl.min.css.map
+|   |   |   |   |-- js/
+|   |   |   |   |   |-- bootstrap.bundle.js
+|   |   |   |   |   |-- bootstrap.bundle.js.map
+|   |   |   |   |   |-- bootstrap.bundle.min.js
+|   |   |   |   |   |-- bootstrap.bundle.min.js.map
+|   |   |   |   |   |-- bootstrap.esm.js
+|   |   |   |   |   |-- bootstrap.esm.js.map
+|   |   |   |   |   |-- bootstrap.esm.min.js
+|   |   |   |   |   |-- bootstrap.esm.min.js.map
+|   |   |   |   |   |-- bootstrap.js
+|   |   |   |   |   |-- bootstrap.js.map
+|   |   |   |   |   |-- bootstrap.min.js
+|   |   |   |   |   |-- bootstrap.min.js.map
+|   |   |   |-- bootstrap-icons/
+|   |   |   |   |-- bootstrap-icons.css
+|   |   |   |   |-- bootstrap-icons.json
+|   |   |   |   |-- fonts/
+|   |   |   |   |   |-- bootstrap-icons.woff
+|   |   |   |   |   |-- bootstrap-icons.woff2
+|   |   |   |-- boxicons/
+|   |   |   |   |-- css/
+|   |   |   |   |   |-- animations.css
+|   |   |   |   |   |-- boxicons.css
+|   |   |   |   |   |-- boxicons.min.css
+|   |   |   |   |   |-- transformations.css
+|   |   |   |   |-- fonts/
+|   |   |   |   |   |-- boxicons.eot
+|   |   |   |   |   |-- boxicons.svg
+|   |   |   |   |   |-- boxicons.ttf
+|   |   |   |   |   |-- boxicons.woff
+|   |   |   |   |   |-- boxicons.woff2
+|   |   |   |-- remixicon/
+|   |   |   |   |-- remixicon.css
+|   |   |   |   |-- remixicon.eot
+|   |   |   |   |-- remixicon.less
+|   |   |   |   |-- remixicon.svg
+|   |   |   |   |-- remixicon.symbol.svg
+|   |   |   |   |-- remixicon.ttf
+|   |   |   |   |-- remixicon.woff
+|   |   |   |   |-- remixicon.woff2
+|   |-- auth/
+|   |   |-- css/
+|   |   |   |-- style.css
+|   |   |-- images/
+|   |   |   |-- background.png
+|   |-- guest/
+|   |   |-- css/
+|   |   |   |-- style.css
+|   |   |-- img/
+|   |   |   |-- background.png
+|   |   |   |-- favicon.png
+|   |   |   |-- footer-bg.png
+|   |   |   |-- hero-bg.png
+|   |   |   |-- hero-img.svg
+|   |   |   |-- logo.png
+|   |   |   |-- team-shape.svg
+|   |   |   |-- team/
+|   |   |   |   |-- aghiz.jpg
+|   |   |   |   |-- alfin.jpg
+|   |   |   |   |-- alya.jpg
+|   |   |   |   |-- amanda.jpg
+|   |   |   |   |-- devi-mulyana.jpg
+|   |   |   |   |-- dika-haekal.jpg
+|   |   |-- vendor/
+|   |   |   |-- aos/
+|   |   |   |   |-- aos.cjs.js
+|   |   |   |   |-- aos.css
+|   |   |   |   |-- aos.esm.js
+|   |   |   |   |-- aos.js
+|   |   |   |   |-- aos.js.map
+|   |   |   |-- bootstrap/
+|   |   |   |   |-- css/
+|   |   |   |   |   |-- bootstrap-grid.css
+|   |   |   |   |   |-- bootstrap-grid.css.map
+|   |   |   |   |   |-- bootstrap-grid.min.css
+|   |   |   |   |   |-- bootstrap-grid.min.css.map
+|   |   |   |   |   |-- bootstrap-grid.rtl.css
+|   |   |   |   |   |-- bootstrap-grid.rtl.css.map
+|   |   |   |   |   |-- bootstrap-grid.rtl.min.css
+|   |   |   |   |   |-- bootstrap-grid.rtl.min.css.map
+|   |   |   |   |   |-- bootstrap-reboot.css
+|   |   |   |   |   |-- bootstrap-reboot.css.map
+|   |   |   |   |   |-- bootstrap-reboot.min.css
+|   |   |   |   |   |-- bootstrap-reboot.min.css.map
+|   |   |   |   |   |-- bootstrap-reboot.rtl.css
+|   |   |   |   |   |-- bootstrap-reboot.rtl.css.map
+|   |   |   |   |   |-- bootstrap-reboot.rtl.min.css
+|   |   |   |   |   |-- bootstrap-reboot.rtl.min.css.map
+|   |   |   |   |   |-- bootstrap-utilities.css
+|   |   |   |   |   |-- bootstrap-utilities.css.map
+|   |   |   |   |   |-- bootstrap-utilities.min.css
+|   |   |   |   |   |-- bootstrap-utilities.min.css.map
+|   |   |   |   |   |-- bootstrap-utilities.rtl.css
+|   |   |   |   |   |-- bootstrap-utilities.rtl.css.map
+|   |   |   |   |   |-- bootstrap-utilities.rtl.min.css
+|   |   |   |   |   |-- bootstrap-utilities.rtl.min.css.map
+|   |   |   |   |   |-- bootstrap.css
+|   |   |   |   |   |-- bootstrap.css.map
+|   |   |   |   |   |-- bootstrap.min.css
+|   |   |   |   |   |-- bootstrap.min.css.map
+|   |   |   |   |   |-- bootstrap.rtl.css
+|   |   |   |   |   |-- bootstrap.rtl.css.map
+|   |   |   |   |   |-- bootstrap.rtl.min.css
+|   |   |   |   |   |-- bootstrap.rtl.min.css.map
+|   |   |   |   |-- js/
+|   |   |   |   |   |-- bootstrap.bundle.js
+|   |   |   |   |   |-- bootstrap.bundle.js.map
+|   |   |   |   |   |-- bootstrap.bundle.min.js
+|   |   |   |   |   |-- bootstrap.bundle.min.js.map
+|   |   |   |   |   |-- bootstrap.esm.js
+|   |   |   |   |   |-- bootstrap.esm.js.map
+|   |   |   |   |   |-- bootstrap.esm.min.js
+|   |   |   |   |   |-- bootstrap.esm.min.js.map
+|   |   |   |   |   |-- bootstrap.js
+|   |   |   |   |   |-- bootstrap.js.map
+|   |   |   |   |   |-- bootstrap.min.js
+|   |   |   |   |   |-- bootstrap.min.js.map
+|   |   |   |-- bootstrap-icons/
+|   |   |   |   |-- bootstrap-icons.css
+|   |   |   |   |-- bootstrap-icons.json
+|   |   |   |   |-- bootstrap-icons.min.css
+|   |   |   |   |-- bootstrap-icons.scss
+|   |   |   |   |-- fonts/
+|   |   |   |   |   |-- bootstrap-icons.woff
+|   |   |   |   |   |-- bootstrap-icons.woff2
+|   |   |   |-- glightbox/
+|   |   |   |   |-- css/
+|   |   |   |   |   |-- glightbox.css
+|   |   |   |   |   |-- glightbox.min.css
+|   |   |   |   |   |-- plyr.css
+|   |   |   |   |   |-- plyr.min.css
+|   |   |   |   |-- js/
+|   |   |   |   |   |-- glightbox.js
+|   |   |   |   |   |-- glightbox.min.js
+|   |   |   |-- isotope-layout/
+|   |   |   |   |-- isotope.pkgd.js
+|   |   |   |   |-- isotope.pkgd.min.js
+|   |   |   |   |   
+|   |   |   |-- purecounter\
+|   |   |   |   |-- purecounter_vanilla.js
+|   |   |   |   |-- purecounter_vanilla.js.map
+|   |   |   |-- remixicon\
+|   |   |   |   |-- remixicon.css
+|   |   |   |   |-- remixicon.eot
+|   |   |   |   |-- remixicon.glyph.json
+|   |   |   |   |-- remixicon.less
+|   |   |   |   |-- remixicon.svg
+|   |   |   |   |-- remixicon.symbol.svg
+|   |   |   |   |-- remixicon.ttf
+|   |   |   |   |-- remixicon.woff
+|   |   |   |   |-- remixicon.woff2
+|   |-- products\
+|   |   |-- product-1.jpg
+|   |   |-- product-10.jpg
+|   |   |-- product-2.jpg
+|   |   |-- product-3.jpg
+|   |   |-- product-4.jpg
+|   |   |-- product-5.jpg
+|   |   |-- product-6.jpg
+|   |   |-- product-7.jpg
+|   |   |-- product-8.jpg
+|   |   |-- product-9.jpg
+|-- resources/
+|   |-- css/
+|   |   |-- app.css
+|   |-- js/
+|   |   |-- components/
+|   |   |   |-- distance.vue
+|   |   |   |-- input-otp.vue
+|   |   |   |-- long-text.vue
+|   |   |   |-- modal-address.vue
+|   |   |   |-- nav-admin.vue
+|   |   |   |-- nav-customer.vue
+|   |   |-- layouts/
+|   |   |   |-- admin.vue
+|   |   |   |-- auth.vue
+|   |   |   |-- guest.vue
+|   |   |-- pages/
+|   |   |   |-- admin/
+|   |   |   |   |-- master/
+|   |   |   |   |   |-- category.vue
+|   |   |   |   |   |-- product.vue
+|   |   |   |   |   |-- user.vue
+|   |   |   |   |-- transaction/
+|   |   |   |   |   |-- [transaction_number].vue
+|   |   |   |   |   |-- index.vue
+|   |   |   |   |-- dashboard.vue
+|   |   |   |-- customer/
+|   |   |   |   |-- transaction/
+|   |   |   |   |   |-- [transaction_number].vue
+|   |   |   |   |   |-- index.vue
+|   |   |   |   |-- checkout.vue
+|   |   |   |   |-- home.vue
+|   |   |   |-- product/
+|   |   |   |   |-- [id].vue
+|   |   |   |-- [all].vue
+|   |   |   |-- forgot-password.vue
+|   |   |   |-- home.vue
+|   |   |   |-- login.vue
+|   |   |   |-- profile.vue
+|   |   |   |-- register.vue
+|   |   |   |-- reset-password.vue
+|   |-- views/
+|   |   |-- emails/
+|   |   |   |-- otp.blade.php
+|   |   |-- app.blade.php
+|   |   |-- social-account.blade.php
+|-- routes/
+|   |-- api.php
+|   |-- channels.php
+|   |-- console.php
+|   |-- web.php
+|-- storage/
+|   |-- app/
+|   |   |-- .gitignore
+|   |   |-- public/
+|   |-- framework/
+|   |   |-- .gitignore
+|   |-- logs/
+|   |   |-- .gitignore
+|-- tests/
+|   |-- CreatesApplication.php
+|   |-- Test.php
+|   |-- TestCase.php
+|   |-- Feature/
+|   |   |-- ProductTest.php
+|-- vendor/

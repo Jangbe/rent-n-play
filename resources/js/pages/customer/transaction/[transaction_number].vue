@@ -194,7 +194,12 @@ const addExtraTime = () => {
                                 <tr>
                                     <td><b>Durasi Sewa</b></td>
                                     <td>:</td>
-                                    <td>{{ transaction.days }} hari</td>
+                                    <td>
+                                        {{ transaction.days }} hari
+                                        <span v-if="transaction?.extra_times?.filter(et => et.is_paid)?.length > 0">
+                                            (+{{ transaction.extra_times.reduce((a, b) => a + b.days, 0) }} hari perpanjangan)
+                                        </span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><b>Diantar</b></td>

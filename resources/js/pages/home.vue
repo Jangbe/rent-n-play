@@ -182,7 +182,7 @@ const teams = [
                         <div v-for="product in products"
                             :class="['col-lg-4 col-md-6 product-item', 'id-' + product.category_id]">
                             <div class="product-wrap">
-                                <img :src="product.picture" class="img-fluid" alt="">
+                                <img :src="product.picture" class="img-fluid" alt="" width="400" height="400">
                                 <div class="product-info">
                                     <h4>{{ product.name }}</h4>
                                     <p>{{ number_format(product.price) }}</p>
