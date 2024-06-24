@@ -7,36 +7,37 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(){
-        $categories= Category::all();
+    public function index()
+    {
+        $categories = Category::all();
         return response()->json($categories);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        $request->validate(['name' => 'required']);
         Category::create([
-            'name' => $request->get('nama')
+            'name' => $request->get('name')
         ]);
-        return response()->json('Berhasi di tambahkan');
-
+        return response()->json('Kategori berhasil ditambahkan');
     }
 
-    public function update(Request $request, $id){
-        $category = Category::find($id);
-        ///dd($category);
+    public function update(Request $request, $id)
+    {
+        $category = Category::findOrFail($id);
 
-        if (!$category) {
-           return response()->json('Data tidak ada', 404);
-        }
-
+        $request->validate(['name' => 'required']);
         $category->update([
-            'name' => $request->get('nama')
+            'name' => $request->get('name')
         ]);
 
+        return response()->json('Kategori berhasil diubah');
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $category = Category::findorFail($id);
         $category->delete();
-        return response()->json('telah di hapus');
+        return response()->json('Kategori berhasil dihapus');
     }
 }

@@ -9,5 +9,5 @@ class Address extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'type', 'street_name', 'contact_name', 'contact_phone', 'detail'];
+    protected $fillable = ['user_id', 'type', 'street_name', 'contact_name', 'contact_phone', 'detail', 'lat', 'lng'];
 }

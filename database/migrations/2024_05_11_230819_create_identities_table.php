@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('type');
             $table->string('identity_number');
-            $table->string('ettachment');
+            $table->string('attachment');
             $table->timestamps();
         });
     }

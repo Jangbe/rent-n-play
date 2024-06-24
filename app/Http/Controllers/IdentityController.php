@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\identity;
+use App\Models\Identity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,14 +16,20 @@ class IdentityController extends Controller
 
     public function store(Request $request)
     {
-        $ettachment = $request->file('ettachment')->store('identities');
+        $attachment = $request->file('attachment')->store('identities');
         Identity::create([
-            'user_id' => $request->get('user_id'),
+            'user_id' => $request->get('user_id', $request->user()->id),
             'type' => $request->get('type'),
             'identity_number' => $request->get('identity_number'),
-            'ettachment' => $ettachment
+            'attachment' => $attachment
         ]);
         return response()->json("Identity berhasil di tambahkan");
+    }
+
+    public function show($user_id)
+    {
+        $identities = Identity::where('user_id', $user_id)->get();
+        return response()->json($identities);
     }
 
     public function update(Request $request, $id)
@@ -35,11 +41,11 @@ class IdentityController extends Controller
             'type' => $request->get('type'),
             'identity_number' => $request->get('identity_number'),
         ];
-        if ($request->hasFile('ettachment')) {
-            if (Storage::exists($identity->ettachment)) {
-                Storage::delete($identity->ettachment);
+        if ($request->hasFile('attachment')) {
+            if (Storage::exists($identity->attachment)) {
+                Storage::delete($identity->attachment);
             }
-            $data['ettachment'] = $request->file('ettachment')->store('identities');
+            $data['attachment'] = $request->file('attachment')->store('identities');
         }
 
         $identity->update($data);
@@ -50,8 +56,8 @@ class IdentityController extends Controller
     public function destroy($id)
     {
         $identity = Identity::findOrFail($id);
-        if (Storage::exists($identity->ettachment)) {
-            Storage::delete($identity->ettachment);
+        if (Storage::exists($identity->attachment)) {
+            Storage::delete($identity->attachment);
         }
         $identity->delete();
         return response()->json('telah di hapus');

@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('transaction_number');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('payment_method', 50);
             $table->boolean('delivery');
-            $table->float('delivery_fee');
+            $table->float('delivery_fee')->default(0);
             $table->foreignId('address_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->float('total');
-            $table->string('status', 20);
+            $table->string('status', 20)->default('pending');
             $table->dateTime('order_datetime');
             $table->timestamps();
         });

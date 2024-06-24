@@ -15,40 +15,50 @@ class AddressController extends Controller
 
     public function store(Request $request)
     {
-        Address::create([
-            'user_id' => $request->get('user_id'),
-            'type' => $request->get('type'),
-            'street_name' => $request->get('street_name'),
-            'contact_name' => $request->get('contact_name'),
-            'contact_phone' => $request->get('contact_phone'),
-            'detail' => $request->get('detail'),
+        $validate = $request->validate([
+            'type' => 'required',
+            'street_name' => 'required',
+            'contact_name' => 'required',
+            'contact_phone' => 'required',
+            'detail' => 'required',
+            'lat' => 'required',
+            'lng' => 'required',
         ]);
-        return response()->json("Address berhasil di tambahkan");
+        $validate['user_id'] = $request->user()->id;
+        Address::create($validate);
+        return response()->json("Data alamat berhasil di tambahkan");
+    }
+
+    public function show($user_id)
+    {
+        if ($user_id != auth()->id()) return abort(404);
+        $addresses = Address::where('user_id', $user_id)->get();
+        return response()->json($addresses);
     }
 
     public function update(Request $request, $id)
     {
-        $Address = Address::find($id);
+        $Address = Address::findOrFail($id);
 
-        if (!$Address) {
-            return response()->json("Data Address tidak ada", 404);
-        }
-
-        $Address->update([
-            'user_id' => $request->get('user_id'),
-            'type' => $request->get('type'),
-            'street_name' => $request->get('street_name'),
-            'contact_name' => $request->get('contact_name'),
-            'contact_phone' => $request->get('contact_phone'),
-            'detail' => $request->get('detail'),
+        $validate = $request->validate([
+            'type' => 'required',
+            'street_name' => 'required',
+            'contact_name' => 'required',
+            'contact_phone' => 'required',
+            'detail' => 'required',
+            'lat' => 'required',
+            'lng' => 'required',
         ]);
+        $validate['user_id'] = $request->user()->id;
+        $Address->update($validate);
 
-        return response()->json("data Address berhasil di ubah");
+        return response()->json("Data alamat berhasil di ubah");
     }
 
-    public function destroy($id){
-        $Address = Address::findorFail($id);
+    public function destroy($id)
+    {
+        $Address = Address::findOrFail($id);
         $Address->delete();
-        return response()->json('telah di hapus');
+        return response()->json('Data alamat berhasil di hapus');
     }
 }

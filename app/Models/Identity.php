@@ -9,5 +9,5 @@ class Identity extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id' , 'type' , 'identity_number' , 'ettachment' ];
+    protected $fillable = ['user_id' , 'type' , 'identity_number' , 'attachment' ];
 }
