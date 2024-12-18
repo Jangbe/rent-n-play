@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Rent N Play</title>
+    <link rel="manifest" href="manifest.json">
     @vite(['resources/sass/app.scss'])
 </head>
 
