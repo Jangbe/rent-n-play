@@ -37,6 +37,13 @@
             mirror: false
         });
     </script>
+    <script defer="defer">
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>
     <!-- Template Main JS File -->
     @vite(['resources/js/app.js'])
 </body>
