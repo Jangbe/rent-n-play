@@ -5,7 +5,7 @@ import routes from '~pages';
 const isUserLoggedIn = () => !!(localStorage.getItem('accessToken'))
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(),
     routes: setupLayouts(routes),
 })
 router.beforeEach(to => {
